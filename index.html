@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 
 <title>The Children Kingdom</title>
 
 <style>
-
 *{
   box-sizing:border-box;
   margin:0;
@@ -16,432 +15,235 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
   -webkit-tap-highlight-color:transparent;
 }
 
-html,
-body{
+html,body{
   width:100%;
   height:100%;
   overflow:hidden;
-  background:#07111b;
+  background:#050b12;
   font-family:Arial,Helvetica,sans-serif;
 }
 
-button{
-  border:0;
-  font:inherit;
-}
-
-/* ============================= */
 /* GAME */
-/* ============================= */
 
 #game{
   position:relative;
   width:100vw;
   height:100vh;
+  background:#050b12;
   overflow:hidden;
 }
 
-/* ============================= */
-/* CITY BACKGROUND */
-/* ============================= */
+/* REAL HIGH QUALITY ART */
 
-#city{
+#art{
   position:absolute;
   inset:0;
 
-  background-image:url("assets/city-bg.jpg");
-  background-size:cover;
-  background-position:center;
+  background-image:url("kingdom-ui.png");
   background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+
+  transition:
+    transform .2s ease,
+    filter .2s ease;
 }
 
-/* subtle HUD readability */
-
-#city::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-
-  background:
-  linear-gradient(
-    to bottom,
-    rgba(3,12,20,.45) 0%,
-    rgba(3,12,20,.05) 20%,
-    rgba(3,12,20,0) 70%,
-    rgba(3,12,20,.38) 100%
-  );
-}
-
-/* ============================= */
-/* TOP PLAYER PANEL */
-/* ============================= */
-
-#topHUD{
-  position:absolute;
-
-  top:max(10px,env(safe-area-inset-top));
-  left:12px;
-  right:12px;
-
-  display:flex;
-  align-items:flex-start;
-  gap:8px;
-
-  z-index:30;
-}
-
-#playerPanel{
-  display:flex;
-  align-items:center;
-
-  min-width:265px;
-
-  height:78px;
-
-  padding:6px 14px 6px 7px;
-
-  border:2px solid #e1bd6b;
-  border-radius:18px;
-
-  background:
-  linear-gradient(
-    180deg,
-    rgba(24,52,76,.96),
-    rgba(8,25,42,.96)
-  );
-
-  box-shadow:
-  0 5px 15px rgba(0,0,0,.5),
-  inset 0 1px rgba(255,255,255,.15);
-}
-
-#avatarFrame{
-  position:relative;
-
-  width:62px;
-  height:62px;
-
-  overflow:hidden;
-
-  border-radius:13px;
-
-  border:2px solid #d8b865;
-
-  background:#243b50;
-}
-
-#avatarFrame img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-#playerInfo{
-  margin-left:11px;
-}
-
-#kingdomName{
-  color:white;
-  font-weight:900;
-  font-size:18px;
-
-  text-shadow:
-  0 2px 3px rgba(0,0,0,.8);
-}
-
-#kingdomStats{
-  margin-top:7px;
-
-  display:flex;
-  gap:9px;
-
-  color:#ffdc72;
-
-  font-weight:800;
-  font-size:13px;
-}
-
-.levelBadge{
-  padding:3px 8px;
-
-  background:
-  linear-gradient(#e2a72f,#905a12);
-
-  color:white;
-
-  border-radius:7px;
-
-  border:1px solid #ffd373;
-}
-
-/* ============================= */
-/* RESOURCES */
-/* ============================= */
-
-#resources{
-  display:flex;
-  gap:6px;
-
-  flex:1;
-
-  justify-content:center;
-}
-
-.resource{
-  min-width:117px;
-  height:48px;
-
-  padding:5px 12px 5px 8px;
-
-  display:flex;
-  align-items:center;
-
-  gap:8px;
-
-  border-radius:16px;
-
-  background:
-  linear-gradient(
-    180deg,
-    rgba(28,50,68,.95),
-    rgba(9,24,38,.96)
-  );
-
-  border:1px solid rgba(222,194,123,.55);
-
-  color:white;
-
-  box-shadow:0 4px 12px rgba(0,0,0,.35);
-}
-
-.resource img{
-  width:31px;
-  height:31px;
-  object-fit:contain;
-}
-
-.resourceValue{
-  font-size:16px;
-  font-weight:900;
-
-  text-shadow:
-  0 2px 2px rgba(0,0,0,.65);
-}
-
-/* ============================= */
-/* HOTSPOTS */
-/* ============================= */
-
-/*
-These buttons are invisible.
-
-They sit on top of the real artwork.
-
-Later we adjust their positions
-exactly to match city-bg.jpg.
-*/
+/* CLICKABLE AREAS */
 
 .hotspot{
   position:absolute;
-  z-index:15;
-
-  background:rgba(0,0,0,0);
-
+  z-index:20;
+  border:0;
+  background:transparent;
   cursor:pointer;
 }
 
 /* castle */
 
-#castleHotspot{
-  left:34%;
-  top:22%;
-  width:29%;
+#castle{
+  left:41%;
+  top:15%;
+  width:34%;
   height:39%;
 }
 
 /* barracks */
 
-#barracksHotspot{
-  left:18%;
-  top:18%;
-  width:19%;
-  height:18%;
-}
-
-/* farm */
-
-#farmHotspot{
-  left:57%;
-  top:33%;
-  width:17%;
-  height:17%;
-}
-
-/* mine */
-
-#mineHotspot{
-  left:53%;
-  top:15%;
-  width:16%;
-  height:17%;
-}
-
-/* sawmill */
-
-#sawmillHotspot{
-  left:66%;
-  top:33%;
-  width:19%;
+#barracks{
+  left:13%;
+  top:25%;
+  width:24%;
   height:20%;
 }
 
 /* academy */
 
-#academyHotspot{
-  left:31%;
-  top:48%;
-  width:20%;
-  height:19%;
+#academy{
+  left:18%;
+  top:42%;
+  width:23%;
+  height:17%;
 }
 
-/* hospital */
+/* mine */
 
-#hospitalHotspot{
-  left:15%;
-  top:52%;
-  width:20%;
-  height:19%;
+#mine{
+  right:4%;
+  top:27%;
+  width:21%;
+  height:18%;
+}
+
+/* farm */
+
+#farm{
+  right:2%;
+  top:43%;
+  width:25%;
+  height:18%;
 }
 
 /* shipyard */
 
-#shipyardHotspot{
-  left:61%;
+#shipyard{
+  right:11%;
   top:55%;
-  width:29%;
-  height:31%;
+  width:32%;
+  height:23%;
 }
 
-/* ============================= */
-/* BOTTOM HUD */
-/* ============================= */
+/* alliance */
 
-#bottomHUD{
+#alliance{
+  left:0%;
+  top:27%;
+  width:13%;
+  height:12%;
+}
+
+/* heroes */
+
+#heroes{
+  left:15%;
+  bottom:0%;
+  width:17%;
+  height:11%;
+}
+
+/* world map */
+
+#world{
+  left:43%;
+  bottom:0%;
+  width:19%;
+  height:11%;
+}
+
+/* attack */
+
+#attack{
+  right:1%;
+  bottom:14%;
+  width:18%;
+  height:17%;
+}
+
+/* LIVE DATA LAYER */
+
+#liveHud{
   position:absolute;
-
-  left:12px;
-  right:12px;
-
-  bottom:max(12px,env(safe-area-inset-bottom));
-
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-
   z-index:30;
-}
 
-.bottomGroup{
+  top:max(12px,env(safe-area-inset-top));
+  left:50%;
+
+  transform:translateX(-50%);
+
   display:flex;
-  gap:8px;
+  gap:6px;
+
+  pointer-events:none;
 }
 
-.hudButton{
-  width:78px;
-  height:78px;
+.resource{
+  min-width:74px;
 
-  border-radius:18px;
+  padding:6px 9px;
 
-  overflow:hidden;
+  border-radius:10px;
 
-  background:
-  linear-gradient(
-    #2d4f68,
-    #112739
-  );
+  background:rgba(8,18,30,.88);
+  border:1px solid rgba(212,177,92,.7);
 
-  border:2px solid #d8b663;
+  color:white;
 
-  box-shadow:
-  0 5px 14px rgba(0,0,0,.55);
+  text-align:center;
+
+  box-shadow:0 3px 9px rgba(0,0,0,.4);
 }
 
-.hudButton img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+.resource small{
+  display:block;
+  font-size:8px;
+  color:#d7c291;
 }
 
-#attackButton{
-  width:98px;
-  height:98px;
-
-  border-radius:50%;
-
-  overflow:hidden;
-
-  border:3px solid #e3c06d;
-
-  background:#19354a;
-
-  box-shadow:
-  0 7px 18px rgba(0,0,0,.6);
+.resource strong{
+  display:block;
+  font-size:12px;
+  margin-top:2px;
 }
 
-#attackButton img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
+/* DARK OVERLAY */
 
-/* ============================= */
-/* BUILDING PANEL */
-/* ============================= */
+#shade{
+  display:none;
 
-#panelOverlay{
   position:absolute;
   inset:0;
 
-  display:none;
+  z-index:70;
 
-  background:rgba(3,11,19,.55);
-
-  z-index:60;
+  background:rgba(3,8,15,.55);
+  backdrop-filter:blur(2px);
 }
 
-#panelOverlay.show{
+#shade.show{
   display:block;
 }
+
+/* PANEL */
 
 #panel{
   position:absolute;
 
   left:50%;
-  bottom:-650px;
+  bottom:-700px;
 
   transform:translateX(-50%);
 
   width:min(600px,94vw);
 
-  border-radius:25px 25px 0 0;
+  z-index:80;
 
-  border:2px solid #c5a25e;
+  border-radius:24px 24px 0 0;
 
   overflow:hidden;
 
   background:
-  linear-gradient(
-    #fff9e7,
-    #e8d7af
-  );
+    linear-gradient(
+      180deg,
+      #fff8e5,
+      #dfc995
+    );
+
+  border:2px solid #c69b42;
 
   box-shadow:
-  0 -18px 50px rgba(0,0,0,.55);
+    0 -20px 60px rgba(0,0,0,.65);
 
-  transition:.32s ease;
-
-  z-index:70;
+  transition:bottom .3s ease;
 }
 
 #panel.show{
@@ -449,19 +251,17 @@ exactly to match city-bg.jpg.
 }
 
 #panelHeader{
-  min-height:64px;
+  position:relative;
 
-  padding:14px 58px 12px 19px;
+  padding:16px 55px 13px 18px;
 
   background:
-  linear-gradient(
-    #304f67,
-    #162e41
-  );
+    linear-gradient(
+      #243d59,
+      #0c1b2b
+    );
 
   color:white;
-
-  border-bottom:2px solid #c5a25e;
 }
 
 #panelTitle{
@@ -469,133 +269,135 @@ exactly to match city-bg.jpg.
   font-weight:900;
 }
 
-#panelSubtitle{
+#panelSub{
   margin-top:3px;
-
-  font-size:12px;
-  color:#dce8ef;
+  font-size:11px;
+  color:#d4dce3;
 }
 
 #closePanel{
   position:absolute;
 
-  right:14px;
-  top:14px;
+  right:13px;
+  top:12px;
 
   width:36px;
   height:36px;
 
+  border:0;
   border-radius:50%;
+
+  background:#07131f;
 
   color:white;
 
   font-size:20px;
-
-  background:#14283a;
 }
 
 #panelBody{
   padding:16px;
 }
 
-.statsGrid{
+/* CARDS */
+
+.grid{
   display:grid;
-
-  grid-template-columns:
-  repeat(2,1fr);
-
-  gap:10px;
-
-  margin-bottom:14px;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
 }
 
-.statBox{
-  min-height:70px;
+.card{
+  padding:11px;
 
   border-radius:13px;
 
-  padding:10px;
+  background:rgba(255,255,255,.58);
 
-  background:
-  rgba(255,255,255,.62);
+  border:1px solid #bd9d59;
 
-  border:1px solid #c9b27e;
-
-  color:#4d3d2b;
+  color:#352a1e;
 }
 
-.statLabel{
-  font-size:11px;
-  color:#806b4d;
+.card small{
+  display:block;
+  font-size:10px;
+  color:#766347;
 }
 
-.statValue{
-  margin-top:4px;
-
-  font-size:20px;
-  font-weight:900;
+.card strong{
+  display:block;
+  margin-top:3px;
+  font-size:19px;
 }
 
-.actionButton{
+/* BUTTONS */
+
+.action{
   width:100%;
 
-  margin-top:8px;
+  margin-top:10px;
 
   padding:13px;
 
-  border-radius:13px;
+  border-radius:12px;
+
+  border:1px solid #f0cf77;
+
+  background:
+    linear-gradient(
+      #dba337,
+      #8a5915
+    );
 
   color:white;
 
-  font-size:15px;
   font-weight:900;
 
-  background:
-  linear-gradient(
-    #dca538,
-    #91601b
-  );
-
-  border:1px solid #f4d789;
+  font-size:15px;
 
   box-shadow:
-  0 4px 8px rgba(0,0,0,.22);
+    0 4px 9px rgba(0,0,0,.25);
 }
 
-.blueAction{
+.action.red{
   background:
-  linear-gradient(
-    #4e8ac0,
-    #28547a
-  );
+    linear-gradient(
+      #cf5d53,
+      #802c28
+    );
 }
 
-.redAction{
+.action.blue{
   background:
-  linear-gradient(
-    #d65c54,
-    #85302c
-  );
+    linear-gradient(
+      #4c89c1,
+      #254d73
+    );
 }
 
-/* ============================= */
+.action.green{
+  background:
+    linear-gradient(
+      #61ad58,
+      #33773a
+    );
+}
+
 /* WORLD MAP */
-/* ============================= */
 
 #worldMap{
+  display:none;
+
   position:absolute;
   inset:0;
 
-  display:none;
-
-  z-index:50;
+  z-index:60;
 
   background:
-  radial-gradient(
-    ellipse at center,
-    #3ca9d4,
-    #07587d
-  );
+    linear-gradient(
+      #184c70,
+      #052f4d
+    );
 }
 
 #worldMap.show{
@@ -605,189 +407,166 @@ exactly to match city-bg.jpg.
 #mapBack{
   position:absolute;
 
-  top:90px;
-  left:18px;
+  top:max(18px,env(safe-area-inset-top));
+  left:15px;
 
-  width:52px;
-  height:52px;
+  width:48px;
+  height:48px;
 
   border-radius:50%;
 
-  background:
-  linear-gradient(#345a73,#132b3e);
+  border:2px solid #d2ad5f;
 
-  border:2px solid #d8b663;
+  background:#122b40;
 
   color:white;
 
-  font-size:25px;
+  font-size:24px;
 
-  z-index:20;
+  z-index:10;
 }
+
+#mapTitle{
+  position:absolute;
+
+  top:max(26px,env(safe-area-inset-top));
+
+  left:50%;
+
+  transform:translateX(-50%);
+
+  color:white;
+
+  font-size:21px;
+  font-weight:900;
+}
+
+/* island cards */
 
 .island{
   position:absolute;
 
-  width:160px;
-  height:115px;
+  width:150px;
+  min-height:92px;
 
-  border-radius:50%;
+  padding:12px;
 
-  border:0;
+  border-radius:18px;
+
+  border:2px solid #c9a252;
 
   background:
-  radial-gradient(
-    ellipse,
-    #77c45a 0 52%,
-    #c2ab66 53% 62%,
-    transparent 64%
-  );
+    linear-gradient(
+      rgba(34,67,85,.95),
+      rgba(8,29,45,.97)
+    );
 
   color:white;
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.35);
 }
 
-.islandName{
-  position:absolute;
-
-  left:50%;
-  bottom:-12px;
-
-  transform:translateX(-50%);
-
-  padding:6px 9px;
-
-  border-radius:8px;
-
-  white-space:nowrap;
-
-  background:
-  rgba(11,29,45,.92);
-
-  border:1px solid #d5b66d;
-
-  font-size:11px;
-  font-weight:900;
+.island strong{
+  display:block;
+  font-size:15px;
 }
 
-/*
-These are temporary map objects.
+.island small{
+  display:block;
+  margin-top:6px;
+  color:#d4c18f;
+}
 
-Later we replace these islands
-with actual illustrated island assets.
-*/
-
-#homeIsland{
+#ourIsland{
   left:7%;
-  bottom:17%;
+  bottom:18%;
 }
 
 #redIsland{
-  right:7%;
-  top:18%;
+  right:6%;
+  top:17%;
 }
 
 #greenIsland{
-  right:15%;
+  right:12%;
   bottom:14%;
 }
 
-#centralIsland{
-  left:44%;
+#crownIsland{
+  left:43%;
   top:31%;
 }
 
-/* ============================= */
 /* TOAST */
-/* ============================= */
 
 #toast{
   position:absolute;
 
+  z-index:200;
+
   left:50%;
-  top:100px;
+  top:90px;
 
   transform:
-  translateX(-50%)
-  translateY(-150px);
+    translateX(-50%)
+    translateY(-150px);
 
-  max-width:80%;
+  max-width:85%;
 
-  padding:11px 18px;
+  padding:11px 17px;
 
   border-radius:13px;
 
-  background:
-  rgba(11,27,42,.96);
-
-  border:1px solid #d7b76b;
+  background:rgba(6,20,32,.96);
+  border:1px solid #c9a24e;
 
   color:white;
 
   font-weight:800;
-
-  z-index:150;
+  text-align:center;
 
   transition:.25s;
 }
 
 #toast.show{
   transform:
-  translateX(-50%)
-  translateY(0);
+    translateX(-50%)
+    translateY(0);
 }
 
-/* ============================= */
 /* MOBILE */
-/* ============================= */
 
-@media(max-width:760px){
+@media(max-width:700px){
 
-  #topHUD{
-    gap:4px;
-  }
+  #liveHud{
+    top:auto;
+    bottom:
+      calc(
+        12px +
+        env(safe-area-inset-bottom)
+      );
 
-  #playerPanel{
-    min-width:195px;
-    height:62px;
-  }
-
-  #avatarFrame{
-    width:48px;
-    height:48px;
-  }
-
-  #kingdomName{
-    font-size:13px;
-  }
-
-  #kingdomStats{
-    font-size:10px;
-    gap:4px;
+    gap:3px;
   }
 
   .resource{
-    min-width:70px;
-    height:42px;
-    padding:4px 6px;
+    min-width:57px;
+    padding:5px;
   }
 
-  .resource img{
-    width:24px;
-    height:24px;
+  .resource small{
+    font-size:7px;
   }
 
-  .resourceValue{
-    font-size:11px;
+  .resource strong{
+    font-size:9px;
   }
 
-  .hudButton{
-    width:62px;
-    height:62px;
-  }
-
-  #attackButton{
-    width:76px;
-    height:76px;
+  .island{
+    width:120px;
+    min-height:80px;
+    padding:8px;
   }
 
 }
@@ -795,491 +574,326 @@ with actual illustrated island assets.
 </style>
 </head>
 
-
 <body>
 
 <div id="game">
 
-<!-- ============================ -->
-<!-- CITY -->
-<!-- ============================ -->
-
-<div id="city"></div>
+<div id="art"></div>
 
 
-<!-- ============================ -->
-<!-- TOP HUD -->
-<!-- ============================ -->
+<!-- LIVE RESOURCE VALUES -->
 
-<div id="topHUD">
+<div id="liveHud">
 
-<div id="playerPanel">
+  <div class="resource">
+    <small>GOLD</small>
+    <strong id="gold">128600</strong>
+  </div>
 
-<div id="avatarFrame">
-<img
-src="assets/avatar-king.png"
-alt="">
-</div>
+  <div class="resource">
+    <small>WOOD</small>
+    <strong id="wood">96400</strong>
+  </div>
 
-<div id="playerInfo">
+  <div class="resource">
+    <small>FOOD</small>
+    <strong id="food">72800</strong>
+  </div>
 
-<div id="kingdomName">
-The Children Kingdom
-</div>
-
-<div id="kingdomStats">
-
-<span class="levelBadge">
-Lv.<span id="level">1</span>
-</span>
-
-<span>
-Power
-<span id="power">
-1250
-</span>
-</span>
-
-</div>
-
-</div>
+  <div class="resource">
+    <small>STONE</small>
+    <strong id="stone">54300</strong>
+  </div>
 
 </div>
 
 
-<div id="resources">
+<!-- HOTSPOTS -->
+
+<button id="castle" class="hotspot"></button>
+<button id="barracks" class="hotspot"></button>
+<button id="academy" class="hotspot"></button>
+<button id="mine" class="hotspot"></button>
+<button id="farm" class="hotspot"></button>
+<button id="shipyard" class="hotspot"></button>
+<button id="alliance" class="hotspot"></button>
+<button id="heroes" class="hotspot"></button>
+<button id="world" class="hotspot"></button>
+<button id="attack" class="hotspot"></button>
 
-<div class="resource">
 
-<img
-src="assets/icon-gold.png">
-
-<div class="resourceValue"
-id="gold">
-1500
-</div>
-
-</div>
-
-
-<div class="resource">
-
-<img
-src="assets/icon-wood.png">
-
-<div class="resourceValue"
-id="wood">
-1200
-</div>
-
-</div>
-
-
-<div class="resource">
-
-<img
-src="assets/icon-food.png">
-
-<div class="resourceValue"
-id="food">
-1000
-</div>
-
-</div>
-
-
-<div class="resource">
-
-<img
-src="assets/icon-stone.png">
-
-<div class="resourceValue"
-id="stone">
-800
-</div>
-
-</div>
-
-
-<div class="resource">
-
-<img
-src="assets/icon-gem.png">
-
-<div class="resourceValue"
-id="gem">
-50
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- ============================ -->
-<!-- BUILDING HOTSPOTS -->
-<!-- ============================ -->
-
-<button
-id="castleHotspot"
-class="hotspot">
-</button>
-
-<button
-id="barracksHotspot"
-class="hotspot">
-</button>
-
-<button
-id="farmHotspot"
-class="hotspot">
-</button>
-
-<button
-id="mineHotspot"
-class="hotspot">
-</button>
-
-<button
-id="sawmillHotspot"
-class="hotspot">
-</button>
-
-<button
-id="academyHotspot"
-class="hotspot">
-</button>
-
-<button
-id="hospitalHotspot"
-class="hotspot">
-</button>
-
-<button
-id="shipyardHotspot"
-class="hotspot">
-</button>
-
-
-<!-- ============================ -->
-<!-- BOTTOM HUD -->
-<!-- ============================ -->
-
-<div id="bottomHUD">
-
-<div class="bottomGroup">
-
-<button
-class="hudButton"
-id="heroesBtn">
-
-<img
-src="assets/btn-heroes.png">
-
-</button>
-
-
-<button
-class="hudButton"
-id="allianceBtn">
-
-<img
-src="assets/btn-alliance.png">
-
-</button>
-
-
-<button
-class="hudButton"
-id="worldBtn">
-
-<img
-src="assets/btn-world.png">
-
-</button>
-
-</div>
-
-
-<div class="bottomGroup">
-
-<button
-class="hudButton">
-
-<img
-src="assets/btn-mail.png">
-
-</button>
-
-
-<button
-class="hudButton">
-
-<img
-src="assets/btn-more.png">
-
-</button>
-
-
-<button
-id="attackButton">
-
-<img
-src="assets/btn-attack.png">
-
-</button>
-
-</div>
-
-</div>
-
-
-<!-- ============================ -->
 <!-- WORLD MAP -->
-<!-- ============================ -->
 
 <div id="worldMap">
 
-<button id="mapBack">
-←
-</button>
+  <button id="mapBack">←</button>
+
+  <div id="mapTitle">
+    WORLD MAP
+  </div>
 
 
-<button
-id="homeIsland"
-class="island">
+  <button
+    id="ourIsland"
+    class="island">
 
-<div class="islandName">
-The Children Kingdom
+    <strong>
+      The Children Kingdom
+    </strong>
+
+    <small>
+      Your Capital
+    </small>
+
+  </button>
+
+
+  <button
+    id="redIsland"
+    class="island enemy"
+    data-name="Red Fox Kingdom"
+    data-power="3200">
+
+    <strong>
+      Red Fox Kingdom
+    </strong>
+
+    <small>
+      Power 3,200
+    </small>
+
+  </button>
+
+
+  <button
+    id="greenIsland"
+    class="island enemy"
+    data-name="Green Leaf Kingdom"
+    data-power="2100">
+
+    <strong>
+      Green Leaf Kingdom
+    </strong>
+
+    <small>
+      Power 2,100
+    </small>
+
+  </button>
+
+
+  <button
+    id="crownIsland"
+    class="island enemy"
+    data-name="Crown Island"
+    data-power="7200">
+
+    <strong>
+      Crown Island
+    </strong>
+
+    <small>
+      Power 7,200
+    </small>
+
+  </button>
+
 </div>
 
-</button>
 
-
-<button
-id="redIsland"
-class="island enemy"
-data-name="Red Fox Kingdom"
-data-power="2200">
-
-<div class="islandName">
-Red Fox Kingdom
-</div>
-
-</button>
-
-
-<button
-id="greenIsland"
-class="island enemy"
-data-name="Green Leaf Kingdom"
-data-power="1450">
-
-<div class="islandName">
-Green Leaf Kingdom
-</div>
-
-</button>
-
-
-<button
-id="centralIsland"
-class="island enemy"
-data-name="Crown Island"
-data-power="5200">
-
-<div class="islandName">
-Crown Island
-</div>
-
-</button>
-
-</div>
-
-
-<!-- ============================ -->
 <!-- PANEL -->
-<!-- ============================ -->
 
-<div id="panelOverlay"></div>
+<div id="shade"></div>
 
 <div id="panel">
 
-<div id="panelHeader">
+  <div id="panelHeader">
 
-<div id="panelTitle">
-Building
-</div>
+    <div id="panelTitle"></div>
 
-<div id="panelSubtitle">
-Kingdom information
-</div>
+    <div id="panelSub"></div>
 
-<button id="closePanel">
-×
-</button>
+    <button id="closePanel">
+      ×
+    </button>
 
-</div>
+  </div>
 
-<div id="panelBody">
-</div>
+  <div id="panelBody"></div>
 
 </div>
 
 
-<div id="toast">
-</div>
+<div id="toast"></div>
 
 </div>
-
 
 
 <script>
 
-/* ============================= */
-/* DATA */
-/* ============================= */
+/* ==========================
+   SAVE
+========================== */
 
-const game={
+let state={
 
-gold:1500,
+  gold:128600,
+  wood:96400,
+  food:72800,
+  stone:54300,
 
-wood:1200,
+  castle:15,
+  barracks:12,
+  academy:10,
+  mine:12,
+  farm:12,
+  shipyard:13,
 
-food:1000,
+  soldiers:220,
+  ships:3,
 
-stone:800,
-
-gem:50,
-
-level:1,
-
-soldiers:30,
-
-ships:0,
-
-buildings:{
-
-castle:1,
-barracks:1,
-farm:1,
-mine:1,
-sawmill:1,
-academy:1,
-hospital:1,
-shipyard:1
-
-}
+  guild:"Blue Crown Alliance"
 
 };
 
 
-/* ============================= */
-/* HELPERS */
-/* ============================= */
+const stored=
+localStorage.getItem(
+  "TCK_SAVE_V3"
+);
+
+
+if(stored){
+
+  try{
+
+    state=
+    Object.assign(
+      state,
+      JSON.parse(stored)
+    );
+
+  }catch(e){}
+
+}
+
+
+function save(){
+
+  localStorage.setItem(
+    "TCK_SAVE_V3",
+    JSON.stringify(state)
+  );
+
+}
+
+
+/* ==========================
+   HELPERS
+========================== */
 
 function $(id){
 
-return document.getElementById(id);
+  return document
+  .getElementById(id);
 
 }
 
 
-function updateUI(){
+function num(n){
 
-$("gold").innerText=
-Math.floor(game.gold);
+  if(n>=1000000)
+    return(
+      n/1000000
+    ).toFixed(1)+"M";
 
-$("wood").innerText=
-Math.floor(game.wood);
+  if(n>=1000)
+    return(
+      n/1000
+    ).toFixed(1)+"K";
 
-$("food").innerText=
-Math.floor(game.food);
-
-$("stone").innerText=
-Math.floor(game.stone);
-
-$("gem").innerText=
-game.gem;
-
-$("level").innerText=
-game.level;
-
-
-let power=
-
-game.soldiers*30+
-game.ships*450+
-game.level*300;
-
-
-$("power").innerText=
-power;
+  return Math.floor(n);
 
 }
 
+
+function update(){
+
+  $("gold").innerText=
+  num(state.gold);
+
+  $("wood").innerText=
+  num(state.wood);
+
+  $("food").innerText=
+  num(state.food);
+
+  $("stone").innerText=
+  num(state.stone);
+
+  save();
+
+}
+
+
+/* ==========================
+   TOAST
+========================== */
 
 function toast(message){
 
-$("toast").innerText=
-message;
+  $("toast").innerText=
+  message;
 
-$("toast").classList.add(
-"show"
-);
+  $("toast")
+  .classList.add("show");
 
-setTimeout(()=>{
 
-$("toast").classList.remove(
-"show"
-);
+  setTimeout(()=>{
 
-},1600);
+    $("toast")
+    .classList.remove("show");
+
+  },1700);
 
 }
 
 
-/* ============================= */
-/* PANEL */
-/* ============================= */
+/* ==========================
+   PANEL
+========================== */
 
 function openPanel(
-title,
-subtitle,
-html
+  title,
+  subtitle,
+  html
 ){
 
-$("panelTitle").innerText=
-title;
+  $("panelTitle").innerText=
+  title;
 
-$("panelSubtitle").innerText=
-subtitle;
+  $("panelSub").innerText=
+  subtitle;
 
-$("panelBody").innerHTML=
-html;
+  $("panelBody").innerHTML=
+  html;
 
-$("panel").classList.add(
-"show"
-);
+  $("shade")
+  .classList.add("show");
 
-$("panelOverlay").classList.add(
-"show"
-);
+  $("panel")
+  .classList.add("show");
 
 }
 
 
 function closePanel(){
 
-$("panel").classList.remove(
-"show"
-);
+  $("shade")
+  .classList.remove("show");
 
-$("panelOverlay").classList.remove(
-"show"
-);
+  $("panel")
+  .classList.remove("show");
 
 }
 
@@ -1287,1007 +901,932 @@ $("panelOverlay").classList.remove(
 $("closePanel").onclick=
 closePanel;
 
-$("panelOverlay").onclick=
+$("shade").onclick=
 closePanel;
 
 
-/* ============================= */
-/* RESOURCE GENERATION */
-/* ============================= */
+/* ==========================
+   RESOURCE SPEED
+========================== */
+
+/*
+IMPORTANT:
+
+Resources no longer explode.
+
+Only one small update
+every 30 seconds.
+*/
 
 setInterval(()=>{
 
-game.gold+=
-1+
-game.buildings.mine*.8;
+  state.gold += 25;
+  state.wood += 18;
+  state.food += 22;
+  state.stone += 8;
 
-game.food+=
-1+
-game.buildings.farm*.9;
+  update();
 
-game.wood+=
-1+
-game.buildings.sawmill*.8;
-
-updateUI();
-
-},1000);
+},30000);
 
 
-/* ============================= */
-/* CASTLE */
-/* ============================= */
+/* ==========================
+   CASTLE
+========================== */
 
-$("castleHotspot").onclick=()=>{
+$("castle").onclick=()=>{
 
-openPanel(
-
-"Royal Castle",
-
-"Heart of your kingdom",
-
-`
-
-<div class="statsGrid">
-
-<div class="statBox">
-
-<div class="statLabel">
-Castle Level
-</div>
-
-<div class="statValue">
-${game.buildings.castle}
-</div>
-
-</div>
+  const cost=
+  state.castle*
+  12000;
 
 
-<div class="statBox">
+  openPanel(
 
-<div class="statLabel">
-Kingdom Level
-</div>
+    "Royal Castle",
 
-<div class="statValue">
-${game.level}
-</div>
+    "Capital of The Children Kingdom",
 
-</div>
+    `
 
+    <div class="grid">
 
-<div class="statBox">
+      <div class="card">
 
-<div class="statLabel">
-Soldiers
-</div>
+        <small>Castle Level</small>
 
-<div class="statValue">
-${game.soldiers}
-</div>
+        <strong>
+        ${state.castle}
+        </strong>
 
-</div>
+      </div>
 
 
-<div class="statBox">
+      <div class="card">
 
-<div class="statLabel">
-Warships
-</div>
+        <small>Soldiers</small>
 
-<div class="statValue">
-${game.ships}
-</div>
+        <strong>
+        ${state.soldiers}
+        </strong>
 
-</div>
-
-</div>
+      </div>
 
 
-<button
-class="actionButton"
-onclick="upgradeCastle()">
+      <div class="card">
 
-Upgrade Castle
+        <small>Warships</small>
 
-</button>
+        <strong>
+        ${state.ships}
+        </strong>
 
-`
+      </div>
 
-);
+
+      <div class="card">
+
+        <small>Alliance</small>
+
+        <strong>
+        Blue Crown
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <button
+    class="action green"
+    onclick="upgradeCastle()">
+
+      Upgrade Castle
+
+      <br>
+
+      ${num(cost)} Gold
+
+    </button>
+
+    `
+
+  );
 
 };
 
 
 function upgradeCastle(){
 
-let cost=
+  const cost=
+  state.castle*
+  12000;
 
-game.buildings.castle*500;
+
+  if(
+    state.gold<
+    cost
+  ){
+
+    toast(
+      "Not enough gold"
+    );
+
+    return;
+
+  }
 
 
-if(game.gold<cost){
+  state.gold-=cost;
 
-toast(
-"Not enough gold"
-);
+  state.castle++;
 
-return;
+
+  update();
+
+  closePanel();
+
+
+  toast(
+    "Castle upgraded to Lv."
+    +state.castle
+  );
+
+}
+
+
+/* ==========================
+   BARRACKS
+========================== */
+
+$("barracks").onclick=()=>{
+
+  openPanel(
+
+    "Barracks",
+
+    "Train your royal army",
+
+    `
+
+    <div class="grid">
+
+      <div class="card">
+
+        <small>Barracks Level</small>
+
+        <strong>
+        ${state.barracks}
+        </strong>
+
+      </div>
+
+
+      <div class="card">
+
+        <small>Soldiers</small>
+
+        <strong>
+        ${state.soldiers}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <button
+    class="action red"
+    onclick="trainArmy()">
+
+      Train 20 Soldiers
+
+      <br>
+
+      8K Gold + 5K Food
+
+    </button>
+
+    `
+
+  );
+
+};
+
+
+function trainArmy(){
+
+  if(
+    state.gold<8000 ||
+    state.food<5000
+  ){
+
+    toast(
+      "Not enough resources"
+    );
+
+    return;
+
+  }
+
+
+  state.gold-=8000;
+
+  state.food-=5000;
+
+  state.soldiers+=20;
+
+
+  update();
+
+  closePanel();
+
+
+  toast(
+    "20 soldiers trained"
+  );
 
 }
 
 
-game.gold-=cost;
+/* ==========================
+   SHIPYARD
+========================== */
 
-game.buildings.castle++;
+$("shipyard").onclick=()=>{
 
-game.level++;
+  openPanel(
 
-updateUI();
+    "Royal Shipyard",
 
-toast(
-"Castle upgraded"
-);
+    "Build fleets for overseas war",
 
-closePanel();
+    `
 
-}
+    <div class="grid">
 
+      <div class="card">
 
-/* ============================= */
-/* SHIPYARD */
-/* ============================= */
+        <small>Shipyard Level</small>
 
-$("shipyardHotspot").onclick=
-openShipyard;
+        <strong>
+        ${state.shipyard}
+        </strong>
 
-
-function openShipyard(){
-
-openPanel(
-
-"Royal Shipyard",
-
-"Build fleets for overseas war",
-
-`
-
-<div class="statsGrid">
-
-<div class="statBox">
-
-<div class="statLabel">
-Shipyard Level
-</div>
-
-<div class="statValue">
-${game.buildings.shipyard}
-</div>
-
-</div>
+      </div>
 
 
-<div class="statBox">
+      <div class="card">
 
-<div class="statLabel">
-Warships
-</div>
+        <small>Warships</small>
 
-<div class="statValue">
-${game.ships}
-</div>
+        <strong>
+        ${state.ships}
+        </strong>
 
-</div>
+      </div>
 
-</div>
+    </div>
 
 
-<button
-class="actionButton blueAction"
-onclick="buildShip()">
+    <button
+    class="action blue"
+    onclick="buildShip()">
 
-Build Warship
+      Build Warship
 
-<br>
+      <br>
 
-300 Gold + 250 Wood
+      20K Gold + 15K Wood
 
-</button>
+    </button>
 
+    `
 
-<button
-class="actionButton"
-onclick="upgradeShipyard()">
+  );
 
-Upgrade Shipyard
-
-</button>
-
-`
-
-);
-
-}
+};
 
 
 function buildShip(){
 
-if(
-game.gold<300||
-game.wood<250
-){
+  if(
+    state.gold<20000 ||
+    state.wood<15000
+  ){
 
-toast(
-"Not enough resources"
-);
+    toast(
+      "Not enough resources"
+    );
 
-return;
+    return;
 
-}
-
-
-game.gold-=300;
-
-game.wood-=250;
-
-game.ships++;
-
-updateUI();
-
-toast(
-"Warship completed"
-);
-
-openShipyard();
-
-}
+  }
 
 
-function upgradeShipyard(){
+  state.gold-=20000;
 
-let cost=
+  state.wood-=15000;
 
-game.buildings.shipyard*400;
+  state.ships++;
 
 
-if(game.gold<cost){
+  update();
 
-toast(
-"Not enough gold"
-);
+  closePanel();
 
-return;
+
+  toast(
+    "New warship launched"
+  );
 
 }
 
 
-game.gold-=cost;
+/* ==========================
+   FARM
+========================== */
 
-game.buildings.shipyard++;
+$("farm").onclick=()=>{
 
-updateUI();
+  openPanel(
 
-toast(
-"Shipyard upgraded"
-);
+    "Royal Farm",
 
-openShipyard();
+    "Food production",
+
+    `
+
+    <div class="grid">
+
+      <div class="card">
+
+        <small>Farm Level</small>
+
+        <strong>
+        ${state.farm}
+        </strong>
+
+      </div>
+
+      <div class="card">
+
+        <small>Food Storage</small>
+
+        <strong>
+        ${num(state.food)}
+        </strong>
+
+      </div>
+
+    </div>
+
+    `
+
+  );
+
+};
+
+
+/* ==========================
+   MINE
+========================== */
+
+$("mine").onclick=()=>{
+
+  openPanel(
+
+    "Gold Mine",
+
+    "Kingdom treasury",
+
+    `
+
+    <div class="grid">
+
+      <div class="card">
+
+        <small>Mine Level</small>
+
+        <strong>
+        ${state.mine}
+        </strong>
+
+      </div>
+
+      <div class="card">
+
+        <small>Gold</small>
+
+        <strong>
+        ${num(state.gold)}
+        </strong>
+
+      </div>
+
+    </div>
+
+    `
+
+  );
+
+};
+
+
+/* ==========================
+   ACADEMY
+========================== */
+
+$("academy").onclick=()=>{
+
+  openPanel(
+
+    "Royal Academy",
+
+    "Military technology",
+
+    `
+
+    <div class="grid">
+
+      <div class="card">
+
+        <small>Academy Level</small>
+
+        <strong>
+        ${state.academy}
+        </strong>
+
+      </div>
+
+      <div class="card">
+
+        <small>Research</small>
+
+        <strong>
+        Military I
+        </strong>
+
+      </div>
+
+    </div>
+
+    `
+
+  );
+
+};
+
+
+/* ==========================
+   HEROES
+========================== */
+
+$("heroes").onclick=()=>{
+
+  openPanel(
+
+    "Royal Heroes",
+
+    "Commanders of the kingdom",
+
+    `
+
+    <div class="grid">
+
+      <div class="card">
+
+        <small>Princess Mia</small>
+
+        <strong>
+        Navy
+        </strong>
+
+      </div>
+
+      <div class="card">
+
+        <small>Prince Leo</small>
+
+        <strong>
+        Army
+        </strong>
+
+      </div>
+
+      <div class="card">
+
+        <small>Commander Ben</small>
+
+        <strong>
+        Defence
+        </strong>
+
+      </div>
+
+      <div class="card">
+
+        <small>Next Hero</small>
+
+        <strong>
+        Locked
+        </strong>
+
+      </div>
+
+    </div>
+
+    `
+
+  );
+
+};
+
+
+/* ==========================
+   ALLIANCE
+========================== */
+
+$("alliance").onclick=()=>{
+
+  openPanel(
+
+    state.guild,
+
+    "Alliance Headquarters",
+
+    `
+
+    <div class="grid">
+
+      <div class="card">
+
+        <small>Members</small>
+
+        <strong>
+        4
+        </strong>
+
+      </div>
+
+      <div class="card">
+
+        <small>Alliance Power</small>
+
+        <strong>
+        9.2K
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <button
+    class="action blue"
+    onclick="
+    toast(
+      'Alliance rally ready'
+    )
+    ">
+
+      Prepare Rally
+
+    </button>
+
+    `
+
+  );
+
+};
+
+
+/* ==========================
+   WORLD MAP
+========================== */
+
+function world(){
+
+  $("worldMap")
+  .classList.add("show");
+
+  closePanel();
 
 }
 
 
-/* ============================= */
-/* BARRACKS */
-/* ============================= */
-
-$("barracksHotspot").onclick=()=>{
-
-openPanel(
-
-"Barracks",
-
-"Train armies for war",
-
-`
-
-<div class="statsGrid">
-
-<div class="statBox">
-
-<div class="statLabel">
-Soldiers
-</div>
-
-<div class="statValue">
-${game.soldiers}
-</div>
-
-</div>
-
-
-<div class="statBox">
-
-<div class="statLabel">
-Barracks Level
-</div>
-
-<div class="statValue">
-${game.buildings.barracks}
-</div>
-
-</div>
-
-</div>
-
-
-<button
-class="actionButton redAction"
-onclick="trainSoldiers()">
-
-Train 10 Soldiers
-
-<br>
-
-120 Gold + 150 Food
-
-</button>
-
-`
-
-);
-
-};
-
-
-function trainSoldiers(){
-
-if(
-game.gold<120||
-game.food<150
-){
-
-toast(
-"Not enough resources"
-);
-
-return;
-
-}
-
-
-game.gold-=120;
-
-game.food-=150;
-
-game.soldiers+=10;
-
-updateUI();
-
-toast(
-"10 soldiers trained"
-);
-
-}
-
-
-/* ============================= */
-/* GENERIC BUILDING */
-/* ============================= */
-
-function buildingPanel(
-name,
-key,
-description
-){
-
-openPanel(
-
-name,
-
-description,
-
-`
-
-<div class="statsGrid">
-
-<div class="statBox">
-
-<div class="statLabel">
-Building Level
-</div>
-
-<div class="statValue">
-${game.buildings[key]}
-</div>
-
-</div>
-
-</div>
-
-
-<button
-class="actionButton"
-onclick="upgradeBuilding('${key}')">
-
-Upgrade
-
-</button>
-
-`
-
-);
-
-}
-
-
-$("farmHotspot").onclick=()=>{
-
-buildingPanel(
-"Farm",
-"farm",
-"Produces food"
-);
-
-};
-
-
-$("mineHotspot").onclick=()=>{
-
-buildingPanel(
-"Gold Mine",
-"mine",
-"Produces gold"
-);
-
-};
-
-
-$("sawmillHotspot").onclick=()=>{
-
-buildingPanel(
-"Sawmill",
-"sawmill",
-"Produces wood"
-);
-
-};
-
-
-$("academyHotspot").onclick=()=>{
-
-buildingPanel(
-"Academy",
-"academy",
-"Research technology"
-);
-
-};
-
-
-$("hospitalHotspot").onclick=()=>{
-
-buildingPanel(
-"Hospital",
-"hospital",
-"Heals wounded soldiers"
-);
-
-};
-
-
-function upgradeBuilding(key){
-
-let cost=
-
-game.buildings[key]*220;
-
-
-if(game.gold<cost){
-
-toast(
-"Not enough gold"
-);
-
-return;
-
-}
-
-
-game.gold-=cost;
-
-game.buildings[key]++;
-
-updateUI();
-
-toast(
-"Building upgraded"
-);
-
-closePanel();
-
-}
-
-
-/* ============================= */
-/* ALLIANCE */
-/* ============================= */
-
-$("allianceBtn").onclick=()=>{
-
-openPanel(
-
-"Blue Crown Alliance",
-
-"Guild and alliance warfare",
-
-`
-
-<div class="statsGrid">
-
-<div class="statBox">
-
-<div class="statLabel">
-Members
-</div>
-
-<div class="statValue">
-4
-</div>
-
-</div>
-
-
-<div class="statBox">
-
-<div class="statLabel">
-Alliance Power
-</div>
-
-<div class="statValue">
-4,650
-</div>
-
-</div>
-
-</div>
-
-
-<div class="statBox">
-
-King Leo
-
-<br>
-
-Power 1,400
-
-</div>
-
-
-<div class="statBox">
-
-Mia Storm
-
-<br>
-
-Power 1,150
-
-</div>
-
-
-<div class="statBox">
-
-Ben Oak
-
-<br>
-
-Power 900
-
-</div>
-
-`
-
-);
-
-};
-
-
-/* ============================= */
-/* HEROES */
-/* ============================= */
-
-$("heroesBtn").onclick=()=>{
-
-openPanel(
-
-"Heroes",
-
-"Commanders of the kingdom",
-
-`
-
-<div class="statsGrid">
-
-<div class="statBox">
-
-<div class="statLabel">
-Prince Leo
-</div>
-
-<div class="statValue">
-Land
-</div>
-
-</div>
-
-
-<div class="statBox">
-
-<div class="statLabel">
-Captain Mia
-</div>
-
-<div class="statValue">
-Navy
-</div>
-
-</div>
-
-
-<div class="statBox">
-
-<div class="statLabel">
-Commander Ben
-</div>
-
-<div class="statValue">
-Defence
-</div>
-
-</div>
-
-</div>
-
-`
-
-);
-
-};
-
-
-/* ============================= */
-/* WORLD MAP */
-/* ============================= */
-
-$("worldBtn").onclick=()=>{
-
-$("worldMap").classList.add(
-"show"
-);
-
-};
-
-
-$("attackButton").onclick=()=>{
-
-$("worldMap").classList.add(
-"show"
-);
-
-};
+$("world").onclick=
+world;
+
+$("attack").onclick=
+world;
 
 
 $("mapBack").onclick=()=>{
 
-$("worldMap").classList.remove(
-"show"
-);
+  $("worldMap")
+  .classList.remove("show");
 
 };
 
 
-/* ============================= */
-/* ENEMY ISLAND */
-/* ============================= */
+/* ==========================
+   ENEMY
+========================== */
 
 document
 .querySelectorAll(
-".enemy"
+  ".enemy"
 )
 .forEach(
 
 island=>{
 
-island.onclick=()=>{
+  island.onclick=()=>{
 
-let name=
-island.dataset.name;
+    const name=
+    island.dataset.name;
 
-let enemyPower=
-Number(
-island.dataset.power
-);
-
-
-let ownPower=
-
-game.soldiers*30+
-game.ships*450+
-900;
+    const enemyPower=
+    Number(
+      island.dataset.power
+    );
 
 
-let risk;
+    const rallyPower=
+
+    state.soldiers*20
+    +
+    state.ships*550
+    +
+    1200;
 
 
-if(
-ownPower>
-enemyPower*1.3
-)
-
-risk="LOW";
-
-else if(
-ownPower>=enemyPower
-)
-
-risk="MEDIUM";
-
-else if(
-ownPower>
-enemyPower*.7
-)
-
-risk="HIGH";
-
-else
-
-risk="EXTREME";
+    let risk;
 
 
-openPanel(
+    if(
+      rallyPower >
+      enemyPower*1.4
+    )
 
-name,
-
-"Enemy Kingdom",
-
-`
-
-<div class="statsGrid">
-
-<div class="statBox">
-
-<div class="statLabel">
-Enemy Power
-</div>
-
-<div class="statValue">
-
-${enemyPower}
-
-</div>
-
-</div>
+      risk="LOW";
 
 
-<div class="statBox">
+    else if(
+      rallyPower >=
+      enemyPower
+    )
 
-<div class="statLabel">
-Your Rally Power
-</div>
-
-<div class="statValue">
-
-${ownPower}
-
-</div>
-
-</div>
+      risk="MEDIUM";
 
 
-<div class="statBox">
+    else if(
+      rallyPower >=
+      enemyPower*.7
+    )
 
-<div class="statLabel">
-War Risk
-</div>
-
-<div class="statValue">
-
-${risk}
-
-</div>
-
-</div>
+      risk="HIGH";
 
 
-<div class="statBox">
+    else
 
-<div class="statLabel">
-Ships
-</div>
-
-<div class="statValue">
-
-${game.ships}
-
-</div>
-
-</div>
-
-</div>
+      risk="EXTREME";
 
 
-<button
-class="actionButton redAction"
-onclick="
-attackIsland(
-'${name}',
-${enemyPower}
-)
-">
+    openPanel(
 
-Alliance Rally Attack
+      name,
 
-</button>
+      "Enemy Kingdom",
 
-`
+      `
 
-);
+      <div class="grid">
 
-};
+        <div class="card">
+
+          <small>Enemy Power</small>
+
+          <strong>
+          ${num(enemyPower)}
+          </strong>
+
+        </div>
+
+
+        <div class="card">
+
+          <small>Rally Power</small>
+
+          <strong>
+          ${num(rallyPower)}
+          </strong>
+
+        </div>
+
+
+        <div class="card">
+
+          <small>Risk</small>
+
+          <strong>
+          ${risk}
+          </strong>
+
+        </div>
+
+
+        <div class="card">
+
+          <small>Warships</small>
+
+          <strong>
+          ${state.ships}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <button
+      class="action red"
+      onclick="
+      attackEnemy(
+        '${name}',
+        ${enemyPower}
+      )
+      ">
+
+        Alliance Rally Attack
+
+      </button>
+
+      `
+
+    );
+
+  };
 
 }
 
 );
 
 
-/* ============================= */
-/* ATTACK */
-/* ============================= */
+/* ==========================
+   WAR
+========================== */
 
-function attackIsland(
-name,
-enemyPower
+function attackEnemy(
+  name,
+  enemyPower
 ){
 
-if(game.ships<1){
+  if(
+    state.ships<1
+  ){
 
-toast(
-"Build a warship first"
-);
+    toast(
+      "You need a warship"
+    );
 
-return;
+    return;
+
+  }
+
+
+  const rallyPower=
+
+  state.soldiers*20
+  +
+  state.ships*550
+  +
+  1200;
+
+
+  const chance=
+
+  rallyPower/
+  (
+    rallyPower+
+    enemyPower
+  );
+
+
+  const win=
+  Math.random()
+  <
+  chance;
+
+
+  closePanel();
+
+
+  if(win){
+
+    const lootGold=
+
+    10000+
+    Math.floor(
+      Math.random()*15000
+    );
+
+
+    const lootWood=
+
+    6000+
+    Math.floor(
+      Math.random()*8000
+    );
+
+
+    const casualties=
+
+    Math.max(
+      4,
+      Math.floor(
+        state.soldiers*.08
+      )
+    );
+
+
+    state.gold+=lootGold;
+
+    state.wood+=lootWood;
+
+    state.soldiers=
+    Math.max(
+      0,
+      state.soldiers-
+      casualties
+    );
+
+
+    update();
+
+
+    toast(
+      "VICTORY — "
+      +name+
+      " defeated"
+    );
+
+  }
+
+  else{
+
+    const casualties=
+
+    Math.max(
+      10,
+      Math.floor(
+        state.soldiers*.25
+      )
+    );
+
+
+    state.soldiers=
+    Math.max(
+      0,
+      state.soldiers-
+      casualties
+    );
+
+
+    state.gold=
+    Math.floor(
+      state.gold*.85
+    );
+
+
+    if(
+      state.ships>0 &&
+      Math.random()<.35
+    ){
+
+      state.ships--;
+
+    }
+
+
+    update();
+
+
+    toast(
+      "DEFEAT — rebuild your kingdom"
+    );
+
+  }
 
 }
 
 
-let ownPower=
+/* ==========================
+   START
+========================== */
 
-game.soldiers*30+
-game.ships*450+
-900;
-
-
-let winChance=
-
-ownPower/
-(
-ownPower+
-enemyPower
-);
-
-
-let win=
-
-Math.random()
-<
-winChance;
-
-
-closePanel();
-
-
-if(win){
-
-let goldLoot=
-
-300+
-Math.floor(
-Math.random()*400
-);
-
-
-let woodLoot=
-
-180+
-Math.floor(
-Math.random()*250
-);
-
-
-let casualties=
-
-Math.floor(
-game.soldiers*.12
-);
-
-
-game.soldiers=
-
-Math.max(
-0,
-game.soldiers-
-casualties
-);
-
-
-game.gold+=
-goldLoot;
-
-
-game.wood+=
-woodLoot;
-
-
-updateUI();
-
-
-toast(
-"Victory! Enemy island defeated."
-);
-
-}
-
-else{
-
-let casualties=
-
-Math.max(
-5,
-Math.floor(
-game.soldiers*.3
-)
-);
-
-
-game.soldiers=
-
-Math.max(
-0,
-game.soldiers-
-casualties
-);
-
-
-let goldLoss=
-
-Math.floor(
-game.gold*.15
-);
-
-
-game.gold-=goldLoss;
-
-
-updateUI();
-
-
-toast(
-"Defeat. Rebuild your kingdom."
-);
-
-}
-
-}
-
-
-/* ============================= */
-/* START */
-/* ============================= */
-
-updateUI();
-
-toast(
-"The Children Kingdom"
-);
+update();
 
 </script>
 
