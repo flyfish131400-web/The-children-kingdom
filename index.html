@@ -1,1585 +1,1558 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+/>
+<meta name="theme-color" content="#071521" />
+
 <title>The Children Kingdom</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#071522;
-  font-family:Arial,Helvetica,sans-serif;
-}
-
-button{
-  font:inherit;
-}
-
-#game{
-  position:relative;
-  width:100vw;
-  height:100vh;
-  overflow:hidden;
-  background:#071522;
-}
-
-#scene{
-  position:absolute;
-  inset:0;
-}
-
-#scene svg{
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-/* clickable zones */
-
-.hotspot{
-  position:absolute;
-  border:0;
-  background:transparent;
-  cursor:pointer;
-  z-index:20;
-}
-
-#castleBtn{
-  left:34%;
-  top:23%;
-  width:32%;
-  height:32%;
-}
-
-#barracksBtn{
-  left:13%;
-  top:37%;
-  width:20%;
-  height:18%;
-}
-
-#farmBtn{
-  right:8%;
-  top:41%;
-  width:22%;
-  height:17%;
-}
-
-#shipyardBtn{
-  right:5%;
-  bottom:14%;
-  width:28%;
-  height:22%;
-}
-
-#allianceBtn{
-  left:2%;
-  bottom:3%;
-  width:18%;
-  height:9%;
-}
-
-#heroesBtn{
-  left:21%;
-  bottom:3%;
-  width:18%;
-  height:9%;
-}
-
-#worldBtn{
-  right:21%;
-  bottom:3%;
-  width:18%;
-  height:9%;
-}
-
-#attackBtn{
-  right:2%;
-  bottom:3%;
-  width:18%;
-  height:9%;
-}
-
-/* popup */
-
-#shade{
-  display:none;
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.58);
-  backdrop-filter:blur(3px);
-  z-index:50;
-}
-
-#shade.show{
-  display:block;
-}
-
-#panel{
-  position:absolute;
-  left:50%;
-  bottom:-650px;
-  transform:translateX(-50%);
-  width:min(600px,94vw);
-  z-index:60;
-
-  background:linear-gradient(#fff9e8,#e5c98f);
-  border:2px solid #d5ad55;
-  border-radius:24px 24px 0 0;
-
-  box-shadow:0 -20px 60px rgba(0,0,0,.7);
-  overflow:hidden;
-
-  transition:.28s ease;
-}
-
-#panel.show{
-  bottom:0;
-}
-
-#panelHeader{
-  position:relative;
-  background:linear-gradient(#345a77,#142d42);
-  color:white;
-  padding:16px 55px 13px 18px;
-}
-
-#panelTitle{
-  font-size:22px;
-  font-weight:900;
-}
-
-#panelSub{
-  margin-top:4px;
-  font-size:11px;
-  color:#d4e0e8;
-}
-
-#closePanel{
-  position:absolute;
-  right:13px;
-  top:12px;
-  width:36px;
-  height:36px;
-  border:0;
-  border-radius:50%;
-  background:#0c1e2d;
-  color:white;
-  font-size:20px;
-}
-
-#panelBody{
-  padding:16px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-}
-
-.card{
-  background:rgba(255,255,255,.62);
-  border:1px solid #c7a968;
-  border-radius:13px;
-  padding:11px;
-}
-
-.card small{
-  display:block;
-  font-size:10px;
-  color:#7d6847;
-}
-
-.card strong{
-  display:block;
-  margin-top:3px;
-  font-size:19px;
-  color:#352819;
-}
-
-.action{
-  width:100%;
-  margin-top:10px;
-  padding:13px;
-  border-radius:12px;
-  border:1px solid #efd27f;
-  color:white;
-  font-weight:900;
-
-  background:linear-gradient(#dda73c,#8b5a16);
-}
-
-.blue{
-  background:linear-gradient(#4b92ce,#28577e);
-}
-
-.red{
-  background:linear-gradient(#dd665c,#8a302c);
-}
-
-.green{
-  background:linear-gradient(#67b760,#347c3b);
-}
-
-/* world map */
-
-#worldMap{
-  display:none;
-  position:absolute;
-  inset:0;
-  z-index:40;
-
-  background:
-    radial-gradient(circle at 45% 40%,#55b9d9,#0a5578 60%,#07354e);
-}
-
-#worldMap.show{
-  display:block;
-}
-
-#backMap{
-  position:absolute;
-  left:15px;
-  top:18px;
-  width:48px;
-  height:48px;
-
-  border-radius:50%;
-  border:2px solid #d4af5e;
-
-  background:#16364e;
-  color:white;
-  font-size:24px;
-}
-
-#mapTitle{
-  position:absolute;
-  top:27px;
-  left:50%;
-  transform:translateX(-50%);
-  color:white;
-  font-weight:900;
-  font-size:21px;
-}
-
-.island{
-  position:absolute;
-  width:145px;
-  min-height:90px;
-
-  border-radius:22px;
-  border:2px solid #d0aa5a;
-
-  background:linear-gradient(#42758d,#16364b);
-
-  color:white;
-  padding:11px;
-
-  box-shadow:0 12px 28px rgba(0,0,0,.4);
-}
-
-.island strong{
-  display:block;
-}
-
-.island small{
-  display:block;
-  margin-top:6px;
-  color:#e0cb95;
-}
-
-#homeIsland{
-  left:6%;
-  bottom:18%;
-}
-
-#redIsland{
-  right:6%;
-  top:18%;
-}
-
-#greenIsland{
-  right:12%;
-  bottom:14%;
-}
-
-#crownIsland{
-  left:42%;
-  top:31%;
-}
-
-#toast{
-  position:absolute;
-  z-index:100;
-  left:50%;
-  top:88px;
-
-  transform:translateX(-50%) translateY(-150px);
-
-  max-width:85%;
-  padding:11px 17px;
-
-  border-radius:13px;
-  border:1px solid #d2ad5e;
-
-  background:rgba(8,25,39,.97);
-  color:white;
-  text-align:center;
-  font-weight:800;
-
-  transition:.25s;
-}
-
-#toast.show{
-  transform:translateX(-50%) translateY(0);
-}
-
-@media(max-width:700px){
-  .island{
-    width:118px;
-    min-height:78px;
+  *{
+    box-sizing:border-box;
+  }
+
+  html,
+  body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#071521;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:white;
+    touch-action:none;
+  }
+
+  canvas{
+    display:block;
+    width:100%;
+    height:100%;
+  }
+
+  #loading{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+      radial-gradient(circle at 50% 35%,#21475e,#071521 72%);
+    transition:opacity .5s ease;
+  }
+
+  #loading.hidden{
+    opacity:0;
+    pointer-events:none;
+  }
+
+  .load-card{
+    width:min(82vw,420px);
+    padding:28px;
+    border-radius:24px;
+    background:rgba(4,16,25,.82);
+    border:1px solid rgba(244,202,112,.45);
+    box-shadow:0 20px 60px rgba(0,0,0,.38);
+    backdrop-filter:blur(16px);
+  }
+
+  .load-title{
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:.2px;
+  }
+
+  .load-sub{
+    margin-top:6px;
+    opacity:.7;
+    font-size:13px;
+  }
+
+  .bar{
+    margin-top:22px;
+    height:8px;
+    overflow:hidden;
+    border-radius:20px;
+    background:rgba(255,255,255,.12);
+  }
+
+  #barFill{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#b88b34,#f3d893,#fff0b9);
+    transition:width .2s ease;
+  }
+
+  .load-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:10px;
+    font-size:12px;
+  }
+
+  #hud{
+    position:fixed;
+    inset:0;
+    z-index:10;
+    pointer-events:none;
+  }
+
+  .topbar{
+    position:absolute;
+    top:max(10px,env(safe-area-inset-top));
+    left:10px;
+    right:10px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+  }
+
+  .brand{
+    min-width:170px;
+    padding:10px 13px;
+    border-radius:17px;
+    background:rgba(5,21,34,.72);
+    border:1px solid rgba(240,199,109,.45);
+    backdrop-filter:blur(12px);
+    box-shadow:0 6px 25px rgba(0,0,0,.22);
+  }
+
+  .brand strong{
+    display:block;
+    font-size:14px;
+  }
+
+  .brand span{
+    display:block;
+    margin-top:2px;
+    font-size:10px;
+    color:#e6c979;
+  }
+
+  .resources{
+    display:flex;
+    overflow:hidden;
+    border-radius:17px;
+    background:rgba(5,21,34,.72);
+    border:1px solid rgba(240,199,109,.45);
+    backdrop-filter:blur(12px);
+  }
+
+  .resource{
+    min-width:64px;
+    padding:8px 10px;
+    text-align:center;
+    border-left:1px solid rgba(255,255,255,.08);
+  }
+
+  .resource:first-child{
+    border-left:0;
+  }
+
+  .resource small{
+    display:block;
+    font-size:8px;
+    opacity:.55;
+  }
+
+  .resource b{
+    display:block;
+    margin-top:1px;
     font-size:11px;
   }
-}
+
+  .crosshair{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:8px;
+    height:8px;
+    margin-left:-4px;
+    margin-top:-4px;
+    border:1px solid rgba(255,255,255,.92);
+    border-radius:50%;
+    box-shadow:0 0 10px rgba(255,255,255,.35);
+  }
+
+  #prompt{
+    position:absolute;
+    left:50%;
+    bottom:120px;
+    transform:translateX(-50%);
+    display:none;
+    text-align:center;
+    pointer-events:none;
+  }
+
+  .prompt-card{
+    min-width:180px;
+    padding:10px 15px;
+    border-radius:15px;
+    background:rgba(5,21,34,.78);
+    border:1px solid rgba(244,204,115,.45);
+    backdrop-filter:blur(12px);
+  }
+
+  .prompt-card strong{
+    display:block;
+    font-size:14px;
+  }
+
+  .prompt-card span{
+    display:block;
+    margin-top:2px;
+    font-size:10px;
+    opacity:.68;
+  }
+
+  #interactBtn{
+    margin-top:8px;
+    padding:11px 18px;
+    border:0;
+    border-radius:15px;
+    color:#10202a;
+    font-weight:900;
+    background:linear-gradient(180deg,#f4dfa2,#cba34b);
+    box-shadow:0 5px 20px rgba(0,0,0,.25);
+    pointer-events:auto;
+  }
+
+  #modeBtn{
+    position:absolute;
+    right:18px;
+    bottom:calc(24px + env(safe-area-inset-bottom));
+    padding:12px 15px;
+    border-radius:16px;
+    color:white;
+    font-weight:800;
+    border:1px solid rgba(244,204,115,.45);
+    background:rgba(5,21,34,.78);
+    backdrop-filter:blur(12px);
+    pointer-events:auto;
+  }
+
+  #joystick{
+    position:absolute;
+    left:22px;
+    bottom:calc(24px + env(safe-area-inset-bottom));
+    width:112px;
+    height:112px;
+    border-radius:50%;
+    background:rgba(5,21,34,.25);
+    border:1px solid rgba(255,255,255,.2);
+    box-shadow:inset 0 0 25px rgba(255,255,255,.04);
+    pointer-events:auto;
+  }
+
+  #stick{
+    position:absolute;
+    left:34px;
+    top:34px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:rgba(255,255,255,.52);
+    box-shadow:0 4px 15px rgba(0,0,0,.2);
+  }
+
+  #lookpad{
+    position:absolute;
+    right:0;
+    top:82px;
+    width:58%;
+    height:calc(100% - 180px);
+    pointer-events:auto;
+  }
+
+  #notice{
+    position:absolute;
+    left:50%;
+    top:100px;
+    transform:translateX(-50%);
+    max-width:80vw;
+    padding:9px 14px;
+    border-radius:13px;
+    background:rgba(5,21,34,.78);
+    border:1px solid rgba(244,204,115,.35);
+    font-size:12px;
+    opacity:0;
+    transition:opacity .25s;
+  }
+
+  #notice.show{
+    opacity:1;
+  }
+
+  @media(max-width:760px){
+    .topbar{
+      gap:6px;
+    }
+
+    .brand{
+      min-width:140px;
+      padding:8px 9px;
+    }
+
+    .brand strong{
+      font-size:11px;
+    }
+
+    .brand span{
+      font-size:8px;
+    }
+
+    .resource{
+      min-width:47px;
+      padding:7px 5px;
+    }
+
+    .resource b{
+      font-size:9px;
+    }
+
+    .resource small{
+      font-size:7px;
+    }
+
+    #modeBtn{
+      right:14px;
+      font-size:11px;
+    }
+  }
 </style>
 </head>
 
 <body>
 
-<div id="game">
+<div id="loading">
+  <div class="load-card">
+    <div class="load-title">The Children Kingdom</div>
+    <div class="load-sub">Loading Royal Capital...</div>
 
-<div id="scene">
+    <div class="bar">
+      <div id="barFill"></div>
+    </div>
 
-<svg viewBox="0 0 1000 1600" preserveAspectRatio="xMidYMid slice">
+    <div class="load-row">
+      <span id="loadText">Preparing world</span>
+      <b id="loadPct">0%</b>
+    </div>
+  </div>
+</div>
 
-<defs>
+<div id="hud">
 
-<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="0" stop-color="#7ed4ff"/>
-  <stop offset=".52" stop-color="#d9f3ff"/>
-  <stop offset="1" stop-color="#7dc2c7"/>
-</linearGradient>
+  <div class="topbar">
 
-<linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="0" stop-color="#42b8dc"/>
-  <stop offset="1" stop-color="#1675a7"/>
-</linearGradient>
+    <div class="brand">
+      <strong>The Children Kingdom</strong>
+      <span>Lv.15 · Royal Capital</span>
+    </div>
 
-<linearGradient id="grass" x1="0" y1="0" x2="1" y2="1">
-  <stop offset="0" stop-color="#80d163"/>
-  <stop offset="1" stop-color="#3f9d55"/>
-</linearGradient>
+    <div class="resources">
+      <div class="resource">
+        <small>GOLD</small>
+        <b>128K</b>
+      </div>
 
-<linearGradient id="stone" x1="0" y1="0" x2="1" y2="1">
-  <stop offset="0" stop-color="#f3ead9"/>
-  <stop offset="1" stop-color="#aa9f92"/>
-</linearGradient>
+      <div class="resource">
+        <small>WOOD</small>
+        <b>96K</b>
+      </div>
 
-<linearGradient id="blueRoof" x1="0" y1="0" x2="1" y2="1">
-  <stop offset="0" stop-color="#70cfff"/>
-  <stop offset=".5" stop-color="#347abe"/>
-  <stop offset="1" stop-color="#173d74"/>
-</linearGradient>
+      <div class="resource">
+        <small>STONE</small>
+        <b>72K</b>
+      </div>
 
-<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-  <stop offset="0" stop-color="#fff09b"/>
-  <stop offset=".5" stop-color="#e8b840"/>
-  <stop offset="1" stop-color="#966318"/>
-</linearGradient>
+      <div class="resource">
+        <small>FOOD</small>
+        <b>54K</b>
+      </div>
+    </div>
 
-<filter id="shadow">
-  <feDropShadow dx="0" dy="10" stdDeviation="9" flood-opacity=".28"/>
-</filter>
+  </div>
 
-</defs>
+  <div class="crosshair"></div>
 
-<!-- sky -->
+  <div id="prompt">
 
-<rect width="1000" height="1600" fill="url(#sky)"/>
+    <div class="prompt-card">
+      <strong id="promptTitle"></strong>
+      <span id="promptSub"></span>
+    </div>
 
-<!-- distant mountains -->
+    <button id="interactBtn">
+      INTERACT
+    </button>
 
-<path d="M0 510 L170 250 L300 470 L440 230 L620 470 L790 260 L1000 500 L1000 700 L0 700 Z"
-fill="#608a9f" opacity=".55"/>
+  </div>
 
-<path d="M0 560 L160 350 L300 520 L450 340 L600 520 L800 330 L1000 560 L1000 720 L0 720 Z"
-fill="#82a8b0" opacity=".65"/>
+  <div id="joystick">
+    <div id="stick"></div>
+  </div>
 
-<!-- ocean -->
+  <div id="lookpad"></div>
 
-<rect y="650" width="1000" height="950" fill="url(#sea)"/>
+  <button id="modeBtn">
+    KINGDOM VIEW
+  </button>
 
-<!-- island -->
-
-<path d="M70 920
-C80 710 280 570 500 560
-C735 550 915 700 930 930
-C945 1150 810 1310 530 1335
-C250 1360 65 1190 70 920Z"
-fill="#d8c37e"/>
-
-<path d="M95 900
-C120 720 290 600 500 595
-C720 588 875 720 900 920
-C910 1110 785 1250 525 1270
-C275 1285 105 1135 95 900Z"
-fill="url(#grass)"/>
-
-<!-- roads -->
-
-<path d="M490 720 C440 820 420 990 430 1200"
-stroke="#dccd9d" stroke-width="62" fill="none"/>
-
-<path d="M480 850 C350 850 245 920 180 1040"
-stroke="#dccd9d" stroke-width="44" fill="none"/>
-
-<path d="M500 890 C640 870 740 920 840 1040"
-stroke="#dccd9d" stroke-width="44" fill="none"/>
-
-<!-- CASTLE -->
-
-<g filter="url(#shadow)">
-
-<rect x="365" y="620" width="270" height="270" rx="28"
-fill="url(#stone)" stroke="#f7f2e8" stroke-width="8"/>
-
-<rect x="415" y="660" width="170" height="230" rx="18"
-fill="#d7cfbf"/>
-
-<rect x="460" y="775" width="80" height="115" rx="40"
-fill="#51403a"/>
-
-<!-- towers -->
-
-<rect x="320" y="655" width="100" height="250" rx="20"
-fill="url(#stone)"/>
-
-<rect x="580" y="655" width="100" height="250" rx="20"
-fill="url(#stone)"/>
-
-<!-- roofs -->
-
-<polygon points="300,660 370,555 440,660"
-fill="url(#blueRoof)"/>
-
-<polygon points="560,660 630,555 700,660"
-fill="url(#blueRoof)"/>
-
-<polygon points="390,635 500,475 610,635"
-fill="url(#blueRoof)"/>
-
-<!-- gold trim -->
-
-<path d="M390 635 L500 475 L610 635"
-fill="none" stroke="url(#gold)" stroke-width="12"/>
-
-<circle cx="500" cy="540" r="28"
-fill="url(#gold)"/>
-
-<!-- windows -->
-
-<g fill="#54bdf0" stroke="#fff" stroke-width="5">
-<rect x="348" y="720" width="36" height="55" rx="15"/>
-<rect x="615" y="720" width="36" height="55" rx="15"/>
-<rect x="465" y="690" width="70" height="70" rx="25"/>
-</g>
-
-<!-- flags -->
-
-<line x1="500" y1="475" x2="500" y2="410"
-stroke="#664a28" stroke-width="8"/>
-
-<path d="M500 415 L585 430 L500 470Z"
-fill="#e65858"/>
-
-</g>
-
-<!-- Barracks -->
-
-<g filter="url(#shadow)">
-
-<rect x="135" y="735" width="185" height="160" rx="24"
-fill="#d6b780"/>
-
-<polygon points="110,755 225,650 345,755"
-fill="#bd4b3e"/>
-
-<rect x="195" y="805" width="65" height="90" rx="20"
-fill="#6c4936"/>
-
-<circle cx="225" cy="720" r="20"
-fill="#d6b85e"/>
-
-<path d="M213 712 L237 728 M237 712 L213 728"
-stroke="#664623" stroke-width="8"/>
-
-<text x="225" y="930" text-anchor="middle"
-font-size="32" font-weight="900" fill="#fff"
-stroke="#17304a" stroke-width="8" paint-order="stroke">
-BARRACKS
-</text>
-
-</g>
-
-<!-- Farm -->
-
-<g filter="url(#shadow)">
-
-<rect x="710" y="760" width="180" height="120" rx="20"
-fill="#deb87e"/>
-
-<polygon points="680,780 800,690 920,780"
-fill="#df6c45"/>
-
-<rect x="750" y="810" width="50" height="70"
-fill="#684b35"/>
-
-<g stroke="#efcf52" stroke-width="12">
-<line x1="700" y1="915" x2="890" y2="915"/>
-<line x1="700" y1="945" x2="890" y2="945"/>
-<line x1="700" y1="975" x2="890" y2="975"/>
-</g>
-
-<text x="800" y="1035" text-anchor="middle"
-font-size="32" font-weight="900" fill="#fff"
-stroke="#17304a" stroke-width="8" paint-order="stroke">
-FARM
-</text>
-
-</g>
-
-<!-- Academy -->
-
-<g filter="url(#shadow)">
-
-<ellipse cx="270" cy="1030" rx="110" ry="80"
-fill="#f0e1b4"/>
-
-<circle cx="270" cy="1000" r="70"
-fill="#bce5ef"/>
-
-<path d="M200 1005 Q270 900 340 1005"
-fill="none" stroke="#5b91c3" stroke-width="25"/>
-
-<text x="270" y="1140" text-anchor="middle"
-font-size="30" font-weight="900" fill="#fff"
-stroke="#17304a" stroke-width="8" paint-order="stroke">
-ACADEMY
-</text>
-
-</g>
-
-<!-- Gold Mine -->
-
-<g filter="url(#shadow)">
-
-<path d="M710 620 L780 535 L870 575 L900 700 L760 725Z"
-fill="#667178"/>
-
-<g fill="url(#gold)">
-<circle cx="770" cy="650" r="30"/>
-<circle cx="835" cy="620" r="24"/>
-<circle cx="810" cy="685" r="25"/>
-</g>
-
-<text x="805" y="760" text-anchor="middle"
-font-size="30" font-weight="900" fill="#fff"
-stroke="#17304a" stroke-width="8" paint-order="stroke">
-GOLD MINE
-</text>
-
-</g>
-
-<!-- Shipyard -->
-
-<g filter="url(#shadow)">
-
-<rect x="645" y="1100" width="270" height="55"
-fill="#8b613b"/>
-
-<rect x="685" y="1035" width="165" height="100" rx="14"
-fill="#bb8651"/>
-
-<polygon points="655,1055 770,970 875,1055"
-fill="#365f93"/>
-
-<line x1="850" y1="1025" x2="850" y2="890"
-stroke="#6f4b2d" stroke-width="10"/>
-
-<path d="M850 900 L935 935 L850 965Z"
-fill="#e5d39d"/>
-
-<text x="785" y="1205" text-anchor="middle"
-font-size="32" font-weight="900" fill="#fff"
-stroke="#17304a" stroke-width="8" paint-order="stroke">
-SHIPYARD
-</text>
-
-</g>
-
-<!-- ship -->
-
-<g filter="url(#shadow)">
-
-<path d="M710 1260
-L900 1260
-L865 1325
-L745 1325Z"
-fill="#75482b"/>
-
-<line x1="805" y1="1260" x2="805" y2="1135"
-stroke="#63452c" stroke-width="10"/>
-
-<path d="M815 1150
-L895 1200
-L815 1240Z"
-fill="#f1dfae"/>
-
-<path d="M800 1140
-L740 1180
-L800 1225Z"
-fill="#417bb3"/>
-
-</g>
-
-<!-- tiny child soldiers -->
-
-<g filter="url(#shadow)">
-
-<g transform="translate(440 930)">
-<circle cx="0" cy="0" r="24" fill="#f1c39b"/>
-<path d="M-28 -5 Q0 -40 28 -5" fill="#8a94a2"/>
-<rect x="-23" y="22" width="46" height="62" rx="17" fill="#42638e"/>
-<path d="M28 38 L50 72" stroke="#ddd" stroke-width="8"/>
-</g>
-
-<g transform="translate(520 940)">
-<circle cx="0" cy="0" r="24" fill="#e8b98f"/>
-<path d="M-28 -5 Q0 -40 28 -5" fill="#7e8a98"/>
-<rect x="-23" y="22" width="46" height="62" rx="17" fill="#a04446"/>
-<path d="M28 38 L50 72" stroke="#ddd" stroke-width="8"/>
-</g>
-
-<g transform="translate(600 925)">
-<circle cx="0" cy="0" r="24" fill="#f1c39b"/>
-<path d="M-28 -5 Q0 -40 28 -5" fill="#8a94a2"/>
-<rect x="-23" y="22" width="46" height="62" rx="17" fill="#416b49"/>
-<path d="M28 38 L50 72" stroke="#ddd" stroke-width="8"/>
-</g>
-
-</g>
-
-<!-- TOP HUD -->
-
-<g>
-
-<rect x="20" y="30" width="340" height="100" rx="25"
-fill="#142e44" stroke="url(#gold)" stroke-width="6"/>
-
-<circle cx="80" cy="80" r="40"
-fill="#d9a24a"/>
-
-<circle cx="80" cy="80" r="28"
-fill="#f1c49b"/>
-
-<path d="M55 64 Q80 35 105 64"
-fill="#6c4a34"/>
-
-<text x="140" y="74"
-font-size="26" fill="#fff" font-weight="900">
-The Children Kingdom
-</text>
-
-<text x="140" y="108"
-font-size="20" fill="#f2d273">
-Lv. 15   Power 45,680
-</text>
-
-<!-- resources -->
-
-<g font-size="20" fill="#fff" font-weight="900">
-
-<rect x="380" y="35" width="135" height="58" rx="22"
-fill="#143047" stroke="#d4af5e" stroke-width="3"/>
-
-<text x="448" y="72" text-anchor="middle">
-128.6K
-</text>
-
-<rect x="525" y="35" width="135" height="58" rx="22"
-fill="#143047" stroke="#d4af5e" stroke-width="3"/>
-
-<text x="592" y="72" text-anchor="middle">
-96.4K
-</text>
-
-<rect x="670" y="35" width="135" height="58" rx="22"
-fill="#143047" stroke="#d4af5e" stroke-width="3"/>
-
-<text x="738" y="72" text-anchor="middle">
-72.8K
-</text>
-
-<rect x="815" y="35" width="155" height="58" rx="22"
-fill="#143047" stroke="#d4af5e" stroke-width="3"/>
-
-<text x="892" y="72" text-anchor="middle">
-54.3K
-</text>
-
-</g>
-
-</g>
-
-<!-- bottom game buttons -->
-
-<g>
-
-<rect x="15" y="1460" width="180" height="100" rx="22"
-fill="#17374f" stroke="url(#gold)" stroke-width="5"/>
-
-<text x="105" y="1520" text-anchor="middle"
-fill="#fff" font-size="25" font-weight="900">
-ALLIANCE
-</text>
-
-<rect x="210" y="1460" width="180" height="100" rx="22"
-fill="#17374f" stroke="url(#gold)" stroke-width="5"/>
-
-<text x="300" y="1520" text-anchor="middle"
-fill="#fff" font-size="25" font-weight="900">
-HEROES
-</text>
-
-<rect x="610" y="1460" width="180" height="100" rx="22"
-fill="#17374f" stroke="url(#gold)" stroke-width="5"/>
-
-<text x="700" y="1520" text-anchor="middle"
-fill="#fff" font-size="25" font-weight="900">
-WORLD
-</text>
-
-<rect x="805" y="1450" width="180" height="110" rx="25"
-fill="#8f302d" stroke="#f0c35c" stroke-width="6"/>
-
-<text x="895" y="1518" text-anchor="middle"
-fill="#fff" font-size="28" font-weight="900">
-ATTACK
-</text>
-
-</g>
-
-</svg>
+  <div id="notice"></div>
 
 </div>
 
+<script type="importmap">
+{
+  "imports":{
+    "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
 
-<button id="castleBtn" class="hotspot"></button>
-<button id="barracksBtn" class="hotspot"></button>
-<button id="farmBtn" class="hotspot"></button>
-<button id="shipyardBtn" class="hotspot"></button>
-<button id="allianceBtn" class="hotspot"></button>
-<button id="heroesBtn" class="hotspot"></button>
-<button id="worldBtn" class="hotspot"></button>
-<button id="attackBtn" class="hotspot"></button>
+<script type="module">
 
+import * as THREE from "three";
 
-<div id="worldMap">
+import {
+  GLTFLoader
+} from "three/addons/loaders/GLTFLoader.js";
 
-<button id="backMap">←</button>
-
-<div id="mapTitle">
-WORLD MAP
-</div>
-
-<button id="homeIsland" class="island">
-<strong>The Children Kingdom</strong>
-<small>Your Capital</small>
-</button>
-
-<button id="redIsland"
-class="island enemy"
-data-name="Red Fox Kingdom"
-data-power="3200">
-
-<strong>Red Fox Kingdom</strong>
-<small>Power 3,200</small>
-
-</button>
-
-<button id="greenIsland"
-class="island enemy"
-data-name="Green Leaf Kingdom"
-data-power="2100">
-
-<strong>Green Leaf Kingdom</strong>
-<small>Power 2,100</small>
-
-</button>
-
-<button id="crownIsland"
-class="island enemy"
-data-name="Crown Island"
-data-power="7200">
-
-<strong>Crown Island</strong>
-<small>Power 7,200</small>
-
-</button>
-
-</div>
+import {
+  clone
+} from "three/addons/utils/SkeletonUtils.js";
 
 
-<div id="shade"></div>
+/* ========================================
+   BASIC SCENE
+======================================== */
 
-<div id="panel">
+const scene = new THREE.Scene();
 
-<div id="panelHeader">
+scene.background = new THREE.Color(0x8fc9df);
 
-<div id="panelTitle"></div>
-
-<div id="panelSub"></div>
-
-<button id="closePanel">
-×
-</button>
-
-</div>
-
-<div id="panelBody"></div>
-
-</div>
-
-
-<div id="toast"></div>
-
-</div>
-
-
-<script>
-
-let state={
-
-  gold:128600,
-  wood:96400,
-  food:72800,
-  stone:54300,
-
-  castle:15,
-  soldiers:220,
-  ships:3,
-
-  barracks:12,
-  farm:12,
-  shipyard:13,
-
-  guild:"Blue Crown Alliance"
-
-};
-
-
-const SAVE_KEY=
-"TCK_SVG_V1";
-
-
-const saved=
-localStorage.getItem(
-  SAVE_KEY
+scene.fog = new THREE.FogExp2(
+  0x9dcbd7,
+  0.006
 );
 
 
-if(saved){
+/* CAMERA */
 
-  try{
+const camera = new THREE.PerspectiveCamera(
+  62,
+  innerWidth / innerHeight,
+  0.1,
+  1000
+);
 
-    state=
-    Object.assign(
-      state,
-      JSON.parse(saved)
-    );
-
-  }catch(e){}
-
-}
-
-
-function $(id){
-
-  return document.getElementById(id);
-
-}
+camera.position.set(
+  0,
+  2,
+  24
+);
 
 
-function save(){
+/* RENDERER */
 
-  localStorage.setItem(
-    SAVE_KEY,
-    JSON.stringify(state)
+const renderer = new THREE.WebGLRenderer({
+  antialias:true,
+  powerPreference:"high-performance"
+});
+
+renderer.setSize(
+  innerWidth,
+  innerHeight
+);
+
+renderer.setPixelRatio(
+  Math.min(
+    window.devicePixelRatio,
+    1.7
+  )
+);
+
+renderer.shadowMap.enabled = true;
+
+renderer.shadowMap.type =
+  THREE.PCFSoftShadowMap;
+
+renderer.outputColorSpace =
+  THREE.SRGBColorSpace;
+
+renderer.toneMapping =
+  THREE.ACESFilmicToneMapping;
+
+renderer.toneMappingExposure =
+  1.15;
+
+document.body.prepend(
+  renderer.domElement
+);
+
+
+/* ========================================
+   LIGHTING
+======================================== */
+
+const hemi = new THREE.HemisphereLight(
+  0xdaf2ff,
+  0x594a36,
+  2.5
+);
+
+scene.add(hemi);
+
+
+const sun = new THREE.DirectionalLight(
+  0xffe3b0,
+  4.2
+);
+
+sun.position.set(
+  -35,
+  55,
+  28
+);
+
+sun.castShadow = true;
+
+sun.shadow.mapSize.set(
+  2048,
+  2048
+);
+
+sun.shadow.camera.left = -80;
+sun.shadow.camera.right = 80;
+sun.shadow.camera.top = 80;
+sun.shadow.camera.bottom = -80;
+
+scene.add(sun);
+
+
+/* ========================================
+   SEA
+======================================== */
+
+const seaGeo =
+  new THREE.PlaneGeometry(
+    600,
+    600,
+    64,
+    64
   );
 
-}
+seaGeo.rotateX(
+  -Math.PI / 2
+);
+
+const seaMat =
+  new THREE.MeshStandardMaterial({
+    color:0x126e8c,
+    roughness:.24,
+    metalness:.14
+  });
+
+const sea =
+  new THREE.Mesh(
+    seaGeo,
+    seaMat
+  );
+
+sea.position.y = -2.3;
+
+sea.receiveShadow = true;
+
+scene.add(sea);
 
 
-function toast(text){
+/* ========================================
+   ISLAND BASE
+======================================== */
 
-  $("toast").innerText=text;
+const sand =
+  new THREE.Mesh(
+    new THREE.CylinderGeometry(
+      57,
+      67,
+      2.2,
+      64
+    ),
+    new THREE.MeshStandardMaterial({
+      color:0xd6bd7f,
+      roughness:.95
+    })
+  );
 
-  $("toast").classList.add("show");
+sand.position.y = -2.4;
 
-  setTimeout(()=>{
+sand.receiveShadow = true;
 
-    $("toast").classList.remove("show");
-
-  },1600);
-
-}
+scene.add(sand);
 
 
-function openPanel(
-  title,
-  subtitle,
-  html
+const island =
+  new THREE.Mesh(
+    new THREE.CylinderGeometry(
+      51,
+      58,
+      5,
+      64
+    ),
+    new THREE.MeshStandardMaterial({
+      color:0x668d51,
+      roughness:.9
+    })
+  );
+
+island.position.y = -1.5;
+
+island.receiveShadow = true;
+
+scene.add(island);
+
+
+/* ========================================
+   PATHS
+======================================== */
+
+function makePath(
+  x,
+  z,
+  w,
+  d,
+  rot = 0
 ){
 
-  $("panelTitle").innerText=
-  title;
+  const p =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        w,
+        .06,
+        d
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0xc7ad70,
+        roughness:1
+      })
+    );
 
-  $("panelSub").innerText=
-  subtitle;
-
-  $("panelBody").innerHTML=
-  html;
-
-  $("shade").classList.add("show");
-
-  $("panel").classList.add("show");
-
-}
-
-
-function closePanel(){
-
-  $("shade").classList.remove("show");
-
-  $("panel").classList.remove("show");
-
-}
-
-
-$("closePanel").onclick=
-closePanel;
-
-
-$("shade").onclick=
-closePanel;
-
-
-/* CASTLE */
-
-$("castleBtn").onclick=()=>{
-
-  openPanel(
-
-  "Royal Castle",
-
-  "Capital of The Children Kingdom",
-
-  `
-
-  <div class="grid">
-
-  <div class="card">
-  <small>Castle Level</small>
-  <strong>${state.castle}</strong>
-  </div>
-
-  <div class="card">
-  <small>Soldiers</small>
-  <strong>${state.soldiers}</strong>
-  </div>
-
-  <div class="card">
-  <small>Warships</small>
-  <strong>${state.ships}</strong>
-  </div>
-
-  <div class="card">
-  <small>Alliance</small>
-  <strong>Blue Crown</strong>
-  </div>
-
-  </div>
-
-  <button
-  class="action green"
-  onclick="upgradeCastle()">
-
-  Upgrade Castle
-
-  </button>
-
-  `
-
+  p.position.set(
+    x,
+    .05,
+    z
   );
+
+  p.rotation.y =
+    rot;
+
+  p.receiveShadow =
+    true;
+
+  scene.add(p);
+
+}
+
+
+makePath(
+  0,
+  5,
+  4,
+  28
+);
+
+makePath(
+  -10,
+  12,
+  18,
+  3,
+  -.15
+);
+
+makePath(
+  11,
+  12,
+  20,
+  3,
+  .15
+);
+
+makePath(
+  4,
+  27,
+  4,
+  24
+);
+
+
+/* ========================================
+   MODEL FILES
+======================================== */
+
+const modelFiles = {
+
+  castle:"castle.glb",
+
+  gate:"gate.glb",
+
+  farm:"farm.glb",
+
+  barn:"barn.glb",
+
+  mine:"mine.glb",
+
+  port:"port.glb",
+
+  guard:"guard.glb",
+
+  archer:"archer.glb",
+
+  king:"king.glb"
 
 };
 
 
-function upgradeCastle(){
+const loader =
+  new GLTFLoader();
 
-  const cost=
-  state.castle*
-  12000;
+const cache = {};
+
+const modelEntries =
+  Object.entries(
+    modelFiles
+  );
+
+let loadDone = 0;
 
 
-  if(
-    state.gold<
-    cost
-  ){
+/* ========================================
+   LOADING UI
+======================================== */
 
-    toast(
-      "Not enough gold"
+function loadingStep(
+  text
+){
+
+  loadDone++;
+
+  const pct =
+    Math.round(
+      loadDone /
+      modelEntries.length *
+      100
     );
 
-    return;
+  document
+    .getElementById(
+      "barFill"
+    )
+    .style.width =
+    pct + "%";
+
+  document
+    .getElementById(
+      "loadPct"
+    )
+    .textContent =
+    pct + "%";
+
+  document
+    .getElementById(
+      "loadText"
+    )
+    .textContent =
+    text;
+
+}
+
+
+function loadOne(
+  name,
+  url
+){
+
+  return new Promise(
+    resolve => {
+
+      loader.load(
+
+        url,
+
+        gltf => {
+
+          cache[name] =
+            gltf;
+
+          loadingStep(
+            "Loaded " + name
+          );
+
+          resolve();
+
+        },
+
+        undefined,
+
+        err => {
+
+          console.warn(
+            "Failed model:",
+            name,
+            err
+          );
+
+          loadingStep(
+            "Skipped " + name
+          );
+
+          resolve();
+
+        }
+
+      );
+
+    }
+  );
+
+}
+
+
+await Promise.all(
+
+  modelEntries.map(
+
+    ([name,url]) =>
+      loadOne(
+        name,
+        url
+      )
+
+  )
+
+);
+
+
+/* ========================================
+   MODEL HELPERS
+======================================== */
+
+const interactables = [];
+
+const mixers = [];
+
+
+function fitModelHeight(
+  obj,
+  height
+){
+
+  const box =
+    new THREE.Box3()
+      .setFromObject(obj);
+
+  const size =
+    new THREE.Vector3();
+
+  box.getSize(size);
+
+  const scale =
+    height /
+    Math.max(
+      size.y,
+      .001
+    );
+
+  obj.scale.setScalar(
+    scale
+  );
+
+}
+
+
+function groundModel(
+  obj
+){
+
+  const box =
+    new THREE.Box3()
+      .setFromObject(obj);
+
+  obj.position.y -=
+    box.min.y;
+
+}
+
+
+function applyMeshSettings(
+  obj
+){
+
+  obj.traverse(
+    child => {
+
+      if(child.isMesh){
+
+        child.castShadow =
+          true;
+
+        child.receiveShadow =
+          true;
+
+      }
+
+    }
+  );
+
+}
+
+
+function placeModel(
+  name,
+  x,
+  z,
+  height,
+  rot = 0,
+  canInteract = false,
+  action = ""
+){
+
+  const gltf =
+    cache[name];
+
+  if(!gltf){
+    return null;
+  }
+
+  const obj =
+    gltf.scene.clone(true);
+
+  applyMeshSettings(obj);
+
+  fitModelHeight(
+    obj,
+    height
+  );
+
+  groundModel(obj);
+
+  obj.position.x =
+    x;
+
+  obj.position.z =
+    z;
+
+  obj.rotation.y =
+    rot;
+
+  obj.userData.label =
+    name.toUpperCase();
+
+  obj.userData.action =
+    action;
+
+  scene.add(obj);
+
+  if(canInteract){
+
+    interactables.push(
+      obj
+    );
 
   }
 
-
-  state.gold-=cost;
-
-  state.castle++;
-
-  save();
-
-  closePanel();
-
-  toast(
-    "Castle upgraded to Lv."
-    +state.castle
-  );
+  return obj;
 
 }
 
 
-/* BARRACKS */
+/* ========================================
+   KINGDOM LAYOUT
+======================================== */
 
-$("barracksBtn").onclick=()=>{
-
-  openPanel(
-
-  "Barracks",
-
-  "Train your army",
-
-  `
-
-  <div class="grid">
-
-  <div class="card">
-  <small>Barracks Level</small>
-  <strong>${state.barracks}</strong>
-  </div>
-
-  <div class="card">
-  <small>Soldiers</small>
-  <strong>${state.soldiers}</strong>
-  </div>
-
-  </div>
-
-  <button
-  class="action red"
-  onclick="trainArmy()">
-
-  Train 20 Soldiers
-
-  </button>
-
-  `
-
-  );
-
-};
+placeModel(
+  "castle",
+  0,
+  -15,
+  18,
+  Math.PI,
+  true,
+  "Enter Castle"
+);
 
 
-function trainArmy(){
+placeModel(
+  "gate",
+  0,
+  3,
+  7,
+  0,
+  true,
+  "Assign Guards"
+);
 
-  if(
-    state.gold<8000 ||
-    state.food<5000
-  ){
 
-    toast(
-      "Not enough resources"
-    );
+placeModel(
+  "barn",
+  -18,
+  11,
+  6.2,
+  .45,
+  true,
+  "Manage Farm"
+);
 
-    return;
 
+placeModel(
+  "farm",
+  -11,
+  18,
+  1.3,
+  0,
+  false
+);
+
+
+placeModel(
+  "mine",
+  18,
+  11,
+  6.3,
+  -.45,
+  true,
+  "Collect Gold"
+);
+
+
+placeModel(
+  "port",
+  8,
+  34,
+  7,
+  Math.PI,
+  true,
+  "Open Shipyard"
+);
+
+
+/* ========================================
+   NPCS
+======================================== */
+
+function addNPC(
+  name,
+  x,
+  z,
+  height = 2.1,
+  rotation = Math.PI
+){
+
+  const gltf =
+    cache[name];
+
+  if(!gltf){
+    return null;
   }
 
+  const npc =
+    clone(
+      gltf.scene
+    );
 
-  state.gold-=8000;
-
-  state.food-=5000;
-
-  state.soldiers+=20;
-
-  save();
-
-  closePanel();
-
-  toast(
-    "20 soldiers trained"
+  applyMeshSettings(
+    npc
   );
 
-}
-
-
-/* FARM */
-
-$("farmBtn").onclick=()=>{
-
-  openPanel(
-
-  "Royal Farm",
-
-  "Food production",
-
-  `
-
-  <div class="card">
-
-  <small>Farm Level</small>
-
-  <strong>${state.farm}</strong>
-
-  </div>
-
-  `
-
+  fitModelHeight(
+    npc,
+    height
   );
 
-};
-
-
-/* SHIPYARD */
-
-$("shipyardBtn").onclick=()=>{
-
-  openPanel(
-
-  "Royal Shipyard",
-
-  "Build fleets for overseas war",
-
-  `
-
-  <div class="grid">
-
-  <div class="card">
-
-  <small>Shipyard Level</small>
-
-  <strong>${state.shipyard}</strong>
-
-  </div>
-
-  <div class="card">
-
-  <small>Warships</small>
-
-  <strong>${state.ships}</strong>
-
-  </div>
-
-  </div>
-
-  <button
-  class="action blue"
-  onclick="buildShip()">
-
-  Build Warship
-
-  </button>
-
-  `
-
+  groundModel(
+    npc
   );
 
-};
+  npc.position.x =
+    x;
 
+  npc.position.z =
+    z;
 
-function buildShip(){
+  npc.rotation.y =
+    rotation;
+
+  scene.add(npc);
 
   if(
-    state.gold<20000 ||
-    state.wood<15000
+    gltf.animations &&
+    gltf.animations.length
   ){
 
-    toast(
-      "Not enough resources"
-    );
-
-    return;
-
-  }
-
-
-  state.gold-=20000;
-
-  state.wood-=15000;
-
-  state.ships++;
-
-  save();
-
-  closePanel();
-
-  toast(
-    "New warship launched"
-  );
-
-}
-
-
-/* ALLIANCE */
-
-$("allianceBtn").onclick=()=>{
-
-  openPanel(
-
-  state.guild,
-
-  "Alliance Headquarters",
-
-  `
-
-  <div class="grid">
-
-  <div class="card">
-
-  <small>Members</small>
-
-  <strong>4</strong>
-
-  </div>
-
-  <div class="card">
-
-  <small>Alliance Power</small>
-
-  <strong>9.2K</strong>
-
-  </div>
-
-  </div>
-
-  <button
-  class="action blue"
-  onclick="toast('Alliance rally ready')">
-
-  Prepare Rally
-
-  </button>
-
-  `
-
-  );
-
-};
-
-
-/* HEROES */
-
-$("heroesBtn").onclick=()=>{
-
-  openPanel(
-
-  "Royal Heroes",
-
-  "Commanders",
-
-  `
-
-  <div class="grid">
-
-  <div class="card">
-  <small>Princess Mia</small>
-  <strong>Navy</strong>
-  </div>
-
-  <div class="card">
-  <small>Prince Leo</small>
-  <strong>Army</strong>
-  </div>
-
-  <div class="card">
-  <small>Commander Ben</small>
-  <strong>Defence</strong>
-  </div>
-
-  <div class="card">
-  <small>Next Hero</small>
-  <strong>Locked</strong>
-  </div>
-
-  </div>
-
-  `
-
-  );
-
-};
-
-
-/* WORLD MAP */
-
-function openWorld(){
-
-  $("worldMap").classList.add("show");
-
-  closePanel();
-
-}
-
-
-$("worldBtn").onclick=
-openWorld;
-
-
-$("attackBtn").onclick=
-openWorld;
-
-
-$("backMap").onclick=()=>{
-
-  $("worldMap").classList.remove("show");
-
-};
-
-
-/* ENEMIES */
-
-document
-.querySelectorAll(".enemy")
-.forEach(island=>{
-
-  island.onclick=()=>{
-
-    const name=
-    island.dataset.name;
-
-    const enemyPower=
-    Number(
-      island.dataset.power
-    );
-
-    const rallyPower=
-
-    state.soldiers*20
-    +
-    state.ships*550
-    +
-    1200;
-
-
-    let risk="EXTREME";
-
-
-    if(
-      rallyPower >
-      enemyPower*1.4
-    ){
-
-      risk="LOW";
-
-    }else if(
-      rallyPower >=
-      enemyPower
-    ){
-
-      risk="MEDIUM";
-
-    }else if(
-      rallyPower >=
-      enemyPower*.7
-    ){
-
-      risk="HIGH";
+    const mixer =
+      new THREE.AnimationMixer(
+        npc
+      );
+
+    let clip =
+      gltf.animations.find(
+        a =>
+          /idle/i.test(
+            a.name
+          )
+      );
+
+    if(!clip){
+
+      clip =
+        gltf.animations[0];
 
     }
 
+    mixer
+      .clipAction(
+        clip
+      )
+      .play();
 
-    openPanel(
-
-    name,
-
-    "Enemy Kingdom",
-
-    `
-
-    <div class="grid">
-
-    <div class="card">
-
-    <small>Enemy Power</small>
-
-    <strong>${enemyPower}</strong>
-
-    </div>
-
-    <div class="card">
-
-    <small>Rally Power</small>
-
-    <strong>${rallyPower}</strong>
-
-    </div>
-
-    <div class="card">
-
-    <small>Risk</small>
-
-    <strong>${risk}</strong>
-
-    </div>
-
-    <div class="card">
-
-    <small>Warships</small>
-
-    <strong>${state.ships}</strong>
-
-    </div>
-
-    </div>
-
-    <button
-    class="action red"
-    onclick="
-    attackEnemy(
-      '${name}',
-      ${enemyPower}
-    )
-    ">
-
-    Alliance Rally Attack
-
-    </button>
-
-    `
-
+    mixers.push(
+      mixer
     );
-
-  };
-
-});
-
-
-function attackEnemy(
-  name,
-  enemyPower
-){
-
-  if(
-    state.ships<1
-  ){
-
-    toast(
-      "Build a warship first"
-    );
-
-    return;
 
   }
 
+  return npc;
 
-  const power=
-
-  state.soldiers*20
-  +
-  state.ships*550
-  +
-  1200;
+}
 
 
-  const win=
+addNPC(
+  "guard",
+  -2.3,
+  6
+);
 
-  Math.random()
-  <
-  power/
-  (
-    power+
-    enemyPower
+addNPC(
+  "guard",
+  2.3,
+  6
+);
+
+addNPC(
+  "guard",
+  -5,
+  -4
+);
+
+addNPC(
+  "archer",
+  13,
+  3
+);
+
+
+/* ========================================
+   SIMPLE TREES
+======================================== */
+
+function addTree(
+  x,
+  z,
+  scale = 1
+){
+
+  const trunk =
+    new THREE.Mesh(
+      new THREE.CylinderGeometry(
+        .25,
+        .35,
+        2.4,
+        8
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x6c4d2e
+      })
+    );
+
+  trunk.position.set(
+    x,
+    1.2,
+    z
   );
 
+  trunk.castShadow =
+    true;
 
-  closePanel();
+  scene.add(trunk);
 
 
-  if(win){
+  const leaves =
+    new THREE.Mesh(
+      new THREE.ConeGeometry(
+        1.5 * scale,
+        4 * scale,
+        10
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x365d3d
+      })
+    );
 
-    state.gold+=15000;
+  leaves.position.set(
+    x,
+    3.7 * scale,
+    z
+  );
 
-    state.wood+=8000;
+  leaves.castShadow =
+    true;
 
-    state.soldiers=
+  scene.add(leaves);
 
-    Math.max(
+}
+
+
+[
+  [-25,-10],
+  [-29,1],
+  [-26,17],
+  [26,-8],
+  [28,4],
+  [27,20],
+  [-18,-24],
+  [17,-26],
+  [-33,28],
+  [32,27]
+].forEach(
+  ([x,z]) =>
+    addTree(
+      x,
+      z,
+      .9 + Math.random()*.25
+    )
+);
+
+
+/* ========================================
+   PLAYER
+======================================== */
+
+const player =
+  new THREE.Vector3(
+    0,
+    1.8,
+    22
+  );
+
+let yaw = 0;
+
+let pitch = -.05;
+
+let overview = false;
+
+let currentInteractable =
+  null;
+
+const keys = {};
+
+
+window.addEventListener(
+  "keydown",
+  e => {
+
+    keys[e.code] =
+      true;
+
+  }
+);
+
+window.addEventListener(
+  "keyup",
+  e => {
+
+    keys[e.code] =
+      false;
+
+  }
+);
+
+
+/* ========================================
+   JOYSTICK
+======================================== */
+
+const joystick =
+  document.getElementById(
+    "joystick"
+  );
+
+const stick =
+  document.getElementById(
+    "stick"
+  );
+
+let joyId = null;
+
+let joyX = 0;
+
+let joyY = 0;
+
+
+joystick.addEventListener(
+  "pointerdown",
+  e => {
+
+    joyId =
+      e.pointerId;
+
+    joystick.setPointerCapture(
+      e.pointerId
+    );
+
+  }
+);
+
+
+joystick.addEventListener(
+  "pointermove",
+  e => {
+
+    if(
+      e.pointerId !==
+      joyId
+    ){
+      return;
+    }
+
+    const rect =
+      joystick
+      .getBoundingClientRect();
+
+    let dx =
+      e.clientX -
+      (
+        rect.left +
+        rect.width / 2
+      );
+
+    let dy =
+      e.clientY -
+      (
+        rect.top +
+        rect.height / 2
+      );
+
+    const max =
+      rect.width *
+      .32;
+
+    const len =
+      Math.hypot(
+        dx,
+        dy
+      );
+
+    if(len > max){
+
+      dx *=
+        max / len;
+
+      dy *=
+        max / len;
+
+    }
+
+    joyX =
+      dx / max;
+
+    joyY =
+      dy / max;
+
+    stick.style.transform =
+      `translate(${dx}px,${dy}px)`;
+
+  }
+);
+
+
+function resetJoy(){
+
+  joyId = null;
+
+  joyX = 0;
+
+  joyY = 0;
+
+  stick.style.transform =
+    "translate(0px,0px)";
+
+}
+
+
+joystick.addEventListener(
+  "pointerup",
+  resetJoy
+);
+
+joystick.addEventListener(
+  "pointercancel",
+  resetJoy
+);
+
+
+/* ========================================
+   CAMERA LOOK
+======================================== */
+
+const lookpad =
+  document.getElementById(
+    "lookpad"
+  );
+
+let lookId = null;
+
+let lastX = 0;
+
+let lastY = 0;
+
+
+lookpad.addEventListener(
+  "pointerdown",
+  e => {
+
+    lookId =
+      e.pointerId;
+
+    lastX =
+      e.clientX;
+
+    lastY =
+      e.clientY;
+
+  }
+);
+
+
+lookpad.addEventListener(
+  "pointermove",
+  e => {
+
+    if(
+      e.pointerId !==
+      lookId ||
+      overview
+    ){
+      return;
+    }
+
+    const dx =
+      e.clientX -
+      lastX;
+
+    const dy =
+      e.clientY -
+      lastY;
+
+    yaw -=
+      dx *
+      .004;
+
+    pitch -=
+      dy *
+      .003;
+
+    pitch =
+      THREE.MathUtils.clamp(
+        pitch,
+        -1.05,
+        1.05
+      );
+
+    lastX =
+      e.clientX;
+
+    lastY =
+      e.clientY;
+
+  }
+);
+
+
+lookpad.addEventListener(
+  "pointerup",
+  () => {
+
+    lookId = null;
+
+  }
+);
+
+lookpad.addEventListener(
+  "pointercancel",
+  () => {
+
+    lookId = null;
+
+  }
+);
+
+
+/* ========================================
+   OVERVIEW MODE
+======================================== */
+
+const modeBtn =
+  document.getElementById(
+    "modeBtn"
+  );
+
+function setOverview(
+  state
+){
+
+  overview =
+    state;
+
+  modeBtn.textContent =
+    overview
+      ? "RETURN TO KING"
+      : "KINGDOM VIEW";
+
+  document
+    .querySelector(
+      ".crosshair"
+    )
+    .style.display =
+    overview
+      ? "none"
+      : "block";
+
+  document
+    .getElementById(
+      "joystick"
+    )
+    .style.display =
+    overview
+      ? "none"
+      : "block";
+
+  if(overview){
+
+    camera.position.set(
       0,
-      state.soldiers-
-      Math.floor(
-        state.soldiers*.08
-      )
+      58,
+      68
     );
 
-
-    save();
-
-
-    toast(
-      "VICTORY — "
-      +name+
-      " defeated"
-    );
-
-  }else{
-
-    state.gold=
-
-    Math.floor(
-      state.gold*.85
-    );
-
-
-    state.soldiers=
-
-    Math.max(
+    camera.lookAt(
       0,
-      state.soldiers-
-      Math.floor(
-        state.soldiers*.25
-      )
-    );
-
-
-    save();
-
-
-    toast(
-      "DEFEAT — rebuild your kingdom"
+      0,
+      0
     );
 
   }
@@ -1587,8 +1560,403 @@ function attackEnemy(
 }
 
 
-toast(
-  "The Children Kingdom loaded"
+modeBtn.addEventListener(
+  "click",
+  () => {
+
+    setOverview(
+      !overview
+    );
+
+  }
+);
+
+
+/* ========================================
+   INTERACTION
+======================================== */
+
+const prompt =
+  document.getElementById(
+    "prompt"
+  );
+
+const promptTitle =
+  document.getElementById(
+    "promptTitle"
+  );
+
+const promptSub =
+  document.getElementById(
+    "promptSub"
+  );
+
+const notice =
+  document.getElementById(
+    "notice"
+  );
+
+
+function nearestInteractable(){
+
+  let closest = null;
+
+  let bestDistance = 8;
+
+  for(
+    const obj
+    of interactables
+  ){
+
+    const p =
+      new THREE.Vector3();
+
+    obj.getWorldPosition(
+      p
+    );
+
+    const d =
+      Math.hypot(
+        player.x - p.x,
+        player.z - p.z
+      );
+
+    if(
+      d <
+      bestDistance
+    ){
+
+      bestDistance =
+        d;
+
+      closest =
+        obj;
+
+    }
+
+  }
+
+  return closest;
+
+}
+
+
+function showNotice(
+  text
+){
+
+  notice.textContent =
+    text;
+
+  notice.classList.add(
+    "show"
+  );
+
+  setTimeout(
+    () => {
+
+      notice.classList.remove(
+        "show"
+      );
+
+    },
+    1800
+  );
+
+}
+
+
+document
+  .getElementById(
+    "interactBtn"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      if(
+        !currentInteractable
+      ){
+        return;
+      }
+
+      showNotice(
+        currentInteractable
+        .userData
+        .action
+      );
+
+    }
+  );
+
+
+/* ========================================
+   PLAYER MOVEMENT
+======================================== */
+
+function updatePlayer(
+  dt
+){
+
+  let forward =
+    (
+      keys["KeyW"]
+        ? 1
+        : 0
+    )
+    -
+    (
+      keys["KeyS"]
+        ? 1
+        : 0
+    )
+    -
+    joyY;
+
+  let side =
+    (
+      keys["KeyD"]
+        ? 1
+        : 0
+    )
+    -
+    (
+      keys["KeyA"]
+        ? 1
+        : 0
+    )
+    +
+    joyX;
+
+  const len =
+    Math.hypot(
+      forward,
+      side
+    );
+
+  if(len > 1){
+
+    forward /=
+      len;
+
+    side /=
+      len;
+
+  }
+
+  const speed =
+    6;
+
+  const forwardX =
+    -Math.sin(
+      yaw
+    );
+
+  const forwardZ =
+    -Math.cos(
+      yaw
+    );
+
+  const rightX =
+    Math.cos(
+      yaw
+    );
+
+  const rightZ =
+    -Math.sin(
+      yaw
+    );
+
+  player.x +=
+    (
+      forwardX *
+      forward
+      +
+      rightX *
+      side
+    )
+    *
+    speed *
+    dt;
+
+  player.z +=
+    (
+      forwardZ *
+      forward
+      +
+      rightZ *
+      side
+    )
+    *
+    speed *
+    dt;
+
+  const radius =
+    Math.hypot(
+      player.x,
+      player.z
+    );
+
+  if(radius > 49){
+
+    player.x *=
+      49 /
+      radius;
+
+    player.z *=
+      49 /
+      radius;
+
+  }
+
+  camera.position.copy(
+    player
+  );
+
+  camera.rotation.order =
+    "YXZ";
+
+  camera.rotation.y =
+    yaw;
+
+  camera.rotation.x =
+    pitch;
+
+  currentInteractable =
+    nearestInteractable();
+
+  if(
+    currentInteractable
+  ){
+
+    prompt.style.display =
+      "block";
+
+    promptTitle.textContent =
+      currentInteractable
+      .userData
+      .label;
+
+    promptSub.textContent =
+      currentInteractable
+      .userData
+      .action;
+
+  }else{
+
+    prompt.style.display =
+      "none";
+
+  }
+
+}
+
+
+/* ========================================
+   ANIMATION LOOP
+======================================== */
+
+const clock =
+  new THREE.Clock();
+
+
+function animate(){
+
+  requestAnimationFrame(
+    animate
+  );
+
+  const dt =
+    Math.min(
+      clock.getDelta(),
+      .04
+    );
+
+  for(
+    const mixer
+    of mixers
+  ){
+
+    mixer.update(
+      dt
+    );
+
+  }
+
+  if(
+    !overview
+  ){
+
+    updatePlayer(
+      dt
+    );
+
+  }
+
+  const t =
+    performance.now() *
+    .0003;
+
+  sea.material.color.setHSL(
+    .53,
+    .65,
+    .34 +
+    Math.sin(t) *
+    .015
+  );
+
+  renderer.render(
+    scene,
+    camera
+  );
+
+}
+
+
+animate();
+
+
+/* ========================================
+   FINISH LOADING
+======================================== */
+
+setTimeout(
+  () => {
+
+    document
+      .getElementById(
+        "loading"
+      )
+      .classList
+      .add(
+        "hidden"
+      );
+
+  },
+  500
+);
+
+
+/* ========================================
+   RESIZE
+======================================== */
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    camera.aspect =
+      innerWidth /
+      innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+      innerWidth,
+      innerHeight
+    );
+
+  }
 );
 
 </script>
